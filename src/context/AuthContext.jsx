@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null); // { role, token }
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const url = import.meta.env.BACKEND_URL
+    const url = import.meta.env.VITE_BACKEND_URL
 
     useEffect(() => {
         const token = localStorage.getItem("token");

@@ -13,7 +13,7 @@ export default function GestionarUsuarios() {
   const [confirmModal, setConfirmModal] = useState(null)
   const [notification, setNotification] = useState(null)
   const token = localStorage.getItem("token")
-  const url = import.meta.env.BACKEND_URL
+  const url = import.meta.env.VITE_BACKEND_URL
   useEffect(() => {
     if (!token) {
       setNotification({ type: "error", message: "No estás autenticado. Inicia sesión." })

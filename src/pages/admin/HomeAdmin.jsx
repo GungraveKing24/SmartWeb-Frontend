@@ -14,7 +14,7 @@ export default function AdminHome() {
 
     const token = localStorage.getItem("token")
 
-    const url = import.meta.env.BACKEND_URL
+    const url = import.meta.env.VITE_BACKEND_URL
 
     useEffect(() => {
         if (!token) {

@@ -15,7 +15,7 @@ const HomeStudent = () => {
   useEffect(() => {
     async function fetchData(){
       try {
-        const url = import.meta.env.BACKEND_URL
+        const url = import.meta.env.VITE_BACKEND_URL
         const res = await fetch(url + `/students/calendar/student/${payload.sub}`,{
             headers: {
               Authorization: `Bearer ${JWT}`,

@@ -57,7 +57,7 @@ export default function Login() {
         }
 
         try {
-            const url = import.meta.env.BACKEND_URL
+            const url = import.meta.env.VITE_BACKEND_URL
             const response = await fetch(url + "/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

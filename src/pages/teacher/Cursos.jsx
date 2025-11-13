@@ -14,7 +14,7 @@ export default function VisualizarCursos() {
     const [createModalOpen, setCreateModalOpen] = useState(false)
     const [notification, setNotification] = useState(null)
     const token = localStorage.getItem("token")
-    const url = import.meta.env.BACKEND_URL
+    const url = import.meta.env.VITE_BACKEND_URL
 
     useEffect(() => {
         if (!token) {

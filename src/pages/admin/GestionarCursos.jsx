@@ -30,7 +30,7 @@ export default function GestionarCursos() {
   const loadCourses = async () => {
     setLoading(true)
     try {
-      const url = import.meta.env.BACKEND_URL
+      const url = import.meta.env.VITE_BACKEND_URL
       const response = await fetch(url + `/administrador/all/cursos`, {
         headers: { Authorization: `Bearer ${token}` },
       })

@@ -39,7 +39,7 @@ export default function CallPage() {
   const userId = String(payload.sub); // 👈 fuerza a string
   const nombre = String(payload.name); // 👈 fuerza a string
   const rol = String(payload.rol)
-  const url = import.meta.env.BACKEND_URL
+  const url = import.meta.env.VITE_BACKEND_URL
 
 const tokenStreamProvider = async () => {
   const response = await fetch(url + `/hope/joinCall?curso_id=${params.cursoId}`, {

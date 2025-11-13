@@ -11,7 +11,7 @@ export default function HomeTeacher() {
   useEffect(() => {
     async function fetchData(){
       try {
-        const url = import.meta.env.BACKEND_URL
+        const url = import.meta.env.VITE_BACKEND_URL
         const res = await fetch(url + `http://127.0.0.1:8000/calendar/${payload.sub}`,{
             headers: {
               Authorization: `Bearer ${JWT}`,

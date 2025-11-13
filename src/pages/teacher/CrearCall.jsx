@@ -15,7 +15,7 @@ export default function CreateCallPage() {
 
   const token = localStorage.getItem("token");
 
-  const url = import.meta.env.BACKEND_URL
+  const url = import.meta.env.VITE_BACKEND_URL
 
   // 🔹 Cargar cursos activos del profesor
   useEffect(() => {

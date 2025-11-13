@@ -11,7 +11,7 @@ export default function MyCourses() {
   const [busqueda, setBusqueda] = useState("")
   const [notification, setNotification] = useState(null)
   const token = localStorage.getItem("token")
-  const url = import.meta.env.BACKEND_URL
+  const url = import.meta.env.VITE_BACKEND_URL
   
   useEffect(() => {
     if (!token) {
