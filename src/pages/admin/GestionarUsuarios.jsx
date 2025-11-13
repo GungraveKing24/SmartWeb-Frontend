@@ -13,7 +13,7 @@ export default function GestionarUsuarios() {
   const [confirmModal, setConfirmModal] = useState(null)
   const [notification, setNotification] = useState(null)
   const token = localStorage.getItem("token")
-
+  const url = import.meta.env.BACKEND_URL
   useEffect(() => {
     if (!token) {
       setNotification({ type: "error", message: "No estás autenticado. Inicia sesión." })
@@ -25,7 +25,7 @@ export default function GestionarUsuarios() {
 
   const loadUsuarios = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/administrador/users", {
+      const res = await fetch(url + `/administrador/users`, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       })
       if (!res.ok) throw new Error("Error al obtener los usuarios")
@@ -81,7 +81,7 @@ export default function GestionarUsuarios() {
   const processAction = async (action) => {
     if (action.type === "delete") {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/administrador/users/${action.userId}`, {
+        const res = await fetch(url + `/administrador/users/${action.userId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         })

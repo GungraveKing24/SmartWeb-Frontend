@@ -22,7 +22,8 @@ export default function ParticipantesSesion() {
 
     const fetchParticipantes = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/participants/call/${sesion_id}`, {
+        const url = import.meta.env.BACKEND_URL
+        const res = await fetch(url + `/participants/call/${sesion_id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

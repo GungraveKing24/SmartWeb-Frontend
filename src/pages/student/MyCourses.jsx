@@ -11,7 +11,8 @@ export default function MyCourses() {
   const [busqueda, setBusqueda] = useState("")
   const [notification, setNotification] = useState(null)
   const token = localStorage.getItem("token")
-
+  const url = import.meta.env.BACKEND_URL
+  
   useEffect(() => {
     if (!token) {
       setNotification({ type: "error", message: "No estás autenticado. Inicia sesión." })
@@ -23,7 +24,7 @@ export default function MyCourses() {
 
   const loadCursos = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/students/courses/active", {
+      const res = await fetch(url + `/students/courses/active`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error("Error al cargar los cursos.")

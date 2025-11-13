@@ -65,7 +65,8 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/auth/register", {
+            const url = import.meta.env.BACKEND_URL
+            const response = await fetch(url + "/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

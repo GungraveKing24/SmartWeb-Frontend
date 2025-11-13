@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null); // { role, token }
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const url = import.meta.env.BACKEND_URL
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
     const verifyTokenBackend = async (token) => {
         try {
-            const res = await fetch("http://127.0.0.1:8000/auth/verify-token", {
+            const res = await fetch(url + `/auth/verify-token`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const token = localStorage.getItem("token");
             if (token) {
-                await fetch("http://127.0.0.1:8000/auth/logout", {
+                await fetch(url + `/auth/logout`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

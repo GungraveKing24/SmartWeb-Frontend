@@ -15,11 +15,13 @@ export default function CreateCallPage() {
 
   const token = localStorage.getItem("token");
 
+  const url = import.meta.env.BACKEND_URL
+
   // 🔹 Cargar cursos activos del profesor
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/courses/active/only", {
+        const res = await fetch(url + `/courses/active/only`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -43,7 +45,7 @@ export default function CreateCallPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/hope/createCall`,
+        url + `/hope/createCall`,
         {
           method: "POST",
           headers: {

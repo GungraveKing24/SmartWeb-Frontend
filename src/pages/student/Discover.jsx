@@ -10,6 +10,7 @@ export default function DescubrirCursos() {
   const [busqueda, setBusqueda] = useState("")
   const [notification, setNotification] = useState(null)
   const token = localStorage.getItem("token")
+  const url = import.meta.env.BACKEND_URL
 
   useEffect(() => {
     if (!token) {
@@ -22,7 +23,7 @@ export default function DescubrirCursos() {
 
   const loadCursos = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/students/available", {
+      const res = await fetch(url + `/students/available`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -39,7 +40,7 @@ export default function DescubrirCursos() {
 
   const handleInscribirse = async (cursoId, titulo) => {
     try {
-    const res = await fetch(`http://127.0.0.1:8000/students/courses/enroll/${cursoId}`, {
+    const res = await fetch(url + `/students/courses/enroll/${cursoId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       })

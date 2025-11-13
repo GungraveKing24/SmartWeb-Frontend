@@ -14,6 +14,7 @@ export default function VisualizarCursos() {
     const [createModalOpen, setCreateModalOpen] = useState(false)
     const [notification, setNotification] = useState(null)
     const token = localStorage.getItem("token")
+    const url = import.meta.env.BACKEND_URL
 
     useEffect(() => {
         if (!token) {
@@ -28,8 +29,8 @@ export default function VisualizarCursos() {
     const loadCursos = async () => {
         // En tu caso real harías un fetch aquí
         try {
-            const courses = await fetch("http://127.0.0.1:8000/courses/active", {
-              headers: {Authorization: `Bearer ${token}`}
+            const courses = await fetch(url + `/courses/active`, {
+                headers: { Authorization: `Bearer ${token}` }
             })
 
             if (!courses.ok) throw new Error("Error al cargar los datos.")
@@ -45,69 +46,69 @@ export default function VisualizarCursos() {
     }
 
     const handleToggleStatus = async (cursoId, cursoEstado) => {
-        const link = cursoEstado === "Activo" ? `http://127.0.0.1:8000/deactivate/course/${cursoId}` : `http://127.0.0.1:8000/activate/course/${cursoId}`;
+        const link = cursoEstado === "Activo" ? url + `/deactivate/course/${cursoId}` : url + `/activate/course/${cursoId}`;
         try {
-          const res = await fetch(link, {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          })
+            const res = await fetch(link, {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            })
 
-          if (!res.ok) throw new Error("Error al realizar la accion")
+            if (!res.ok) throw new Error("Error al realizar la accion")
 
-          setNotification({
-            type: "success",
-            message: "✅ Estado del curso actualizado correctamente.",
-          })
+            setNotification({
+                type: "success",
+                message: "✅ Estado del curso actualizado correctamente.",
+            })
 
-          setCursos((prev) =>
-            prev.map((c) =>
-                c.id === cursoId
-                    ? { ...c, estado_curso: c.estado_curso === "Activo" ? "Inactivo" : "Activo" }
-                    : c
+            setCursos((prev) =>
+                prev.map((c) =>
+                    c.id === cursoId
+                        ? { ...c, estado_curso: c.estado_curso === "Activo" ? "Inactivo" : "Activo" }
+                        : c
+                )
             )
-          )
         } catch (error) {
-          console.log(error)
-          setNotification({
-            type: "error",
-            message: "Ocurrio un error, intentelo mas tarde",
-          })
+            console.log(error)
+            setNotification({
+                type: "error",
+                message: "Ocurrio un error, intentelo mas tarde",
+            })
         }
     }
 
     const handleCreateCourse = async (nuevoCurso) => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/create/course", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(nuevoCurso),
-        });
+        try {
+            const res = await fetch(url + `/create/course`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(nuevoCurso),
+            });
 
-        if (!res.ok) throw new Error("Error al crear el curso.")
-        const data = await res.json()
+            if (!res.ok) throw new Error("Error al crear el curso.")
+            const data = await res.json()
 
-        setNotification({
-            type: "success",
-            message: `🎉 Curso "${nuevoCurso.titulo}" creado correctamente.`,
-        })
-        console.log(data)
+            setNotification({
+                type: "success",
+                message: `🎉 Curso "${nuevoCurso.titulo}" creado correctamente.`,
+            })
+            console.log(data)
 
-        setCursos((prev) => [...prev, data.curso])
-      } catch (error) {
-        console.log(error)
-        setNotification({
-            type: "error",
-            message: `Ocurrio un error al crear el curso, intentelo mas tarde`,
-        })
-      } finally {
-        setCreateModalOpen(false)
-      }
+            setCursos((prev) => [...prev, data.curso])
+        } catch (error) {
+            console.log(error)
+            setNotification({
+                type: "error",
+                message: `Ocurrio un error al crear el curso, intentelo mas tarde`,
+            })
+        } finally {
+            setCreateModalOpen(false)
+        }
     }
 
     const filteredCursos = cursos.filter((c) => {
@@ -129,7 +130,7 @@ export default function VisualizarCursos() {
         }
     }
 
-  console.log(cursos)
+    console.log(cursos)
     return (
         <div className="min-h-screen bg-base-100">
             {/* Header */}
@@ -222,7 +223,7 @@ export default function VisualizarCursos() {
                                                 className={`btn btn-sm btn-outline ${c.estado_curso.toLowerCase() === "activo"
                                                     ? "btn-warning"
                                                     : "btn-success"
-                                                }`}
+                                                    }`}
                                                 onClick={() => handleToggleStatus(c.id, c.estado_curso)}
                                             >
                                                 {c.estado_curso.toLowerCase() === "activo" ? "⊘ Desactivar" : "✓ Activar"}

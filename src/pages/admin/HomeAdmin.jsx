@@ -14,6 +14,8 @@ export default function AdminHome() {
 
     const token = localStorage.getItem("token")
 
+    const url = import.meta.env.BACKEND_URL
+
     useEffect(() => {
         if (!token) {
             alert("No estás autenticado. Inicia sesión.", "error")
@@ -26,10 +28,10 @@ export default function AdminHome() {
     const loadData = async () => {
         try {
             const [profesRes, cursosRes] = await Promise.all([
-                fetch("http://127.0.0.1:8000/administrador/profesores", {
+                fetch(url + `/administrador/profesores`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch("http://127.0.0.1:8000/administrador/all/cursos", {
+                fetch(url + `/administrador/all/cursos`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ])
@@ -46,8 +48,8 @@ export default function AdminHome() {
     const handleAction = async (id, name, action) => {
         const endpoint =
             action === "approve"
-                ? `http://127.0.0.1:8000/administrador/approve-profesor/${id}`
-                : `http://127.0.0.1:8000/administrador/deny-profesor/${id}`
+                ? url + `/administrador/approve-profesor/${id}`
+                : url + `/administrador/deny-profesor/${id}`
 
         try {
             const res = await fetch(endpoint, {

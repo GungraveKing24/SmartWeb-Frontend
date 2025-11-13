@@ -25,7 +25,8 @@ export default function SesionesCurso() {
 
     const fetchSesiones = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/courses/${curso_id}/sessions`, {
+        const url = import.meta.env.BACKEND_URL
+        const res = await fetch(url + `/courses/${curso_id}/sessions`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 

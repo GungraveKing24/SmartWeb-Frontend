@@ -15,7 +15,8 @@ const HomeStudent = () => {
   useEffect(() => {
     async function fetchData(){
       try {
-        const res = await fetch(`http://127.0.0.1:8000/students/calendar/student/${payload.sub}`,{
+        const url = import.meta.env.BACKEND_URL
+        const res = await fetch(url + `/students/calendar/student/${payload.sub}`,{
             headers: {
               Authorization: `Bearer ${JWT}`,
             },

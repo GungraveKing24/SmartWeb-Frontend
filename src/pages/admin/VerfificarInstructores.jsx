@@ -14,6 +14,7 @@ export default function VerificarInstructores() {
   const [notification, setNotification] = useState(null)
 
   const token = localStorage.getItem("token")
+  const url = import.meta.env.BACKEND_URL
 
   useEffect(() => {
     if (!token) {
@@ -26,7 +27,7 @@ export default function VerificarInstructores() {
 
   const loadData = async () => {
     try {
-      const profesRes = await fetch("http://127.0.0.1:8000/administrador/profesores", {
+      const profesRes = await fetch(url + `/administrador/profesores`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -71,7 +72,7 @@ export default function VerificarInstructores() {
         : `deny-profesor/${confirmModal.id}`
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/administrador/${endpoint}`, {
+      const res = await fetch(url + `/administrador/${endpoint}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
