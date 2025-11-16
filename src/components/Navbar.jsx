@@ -9,12 +9,13 @@ import ThemeSelector from "./ThemeSelector"
 export default function Navbar() {
     const { user, logout } = useAuth()
     const role = user?.role?.toLowerCase()
+    const home = role == "administrador" ? "/admin" : (role == "profesor" ? "/profesor" : "/usuario")
 
     return (
         <nav className="navbar bg-base-100 border-b border-base-200 px-6 py-4 shadow-sm">
             <div className="flex-1">
                 <Link
-                    to="/"
+                    to={home}
                     className="flex items-center gap-3 text-xl font-bold text-primary hover:opacity-80 transition-opacity"
                 >
                     <img src={Logo || "/placeholder.svg"} alt="SMARTWEB Logo" className="w-10 h-10 rounded-lg" />

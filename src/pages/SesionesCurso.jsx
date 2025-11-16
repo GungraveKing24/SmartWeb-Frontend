@@ -13,8 +13,8 @@ export default function SesionesCurso() {
   const [notification, setNotification] = useState(null)
 
   const token = localStorage.getItem("token")
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  const rol = String(payload.rol); // 👈 fuerza a string
+  const payload = JSON.parse(atob(token.split(".")[1]))
+  const rol = String(payload.rol)
 
   useEffect(() => {
     if (!token) {
@@ -50,11 +50,11 @@ export default function SesionesCurso() {
   const getEstadoBadge = (estado) => {
     switch (estado) {
       case "concluida":
-        return "badge badge-neutral text-gray-700"
+        return "badge badge-neutral"
       case "en_curso":
-        return "badge badge-success text-white"
+        return "badge badge-success text-success-content"
       case "futura":
-        return "badge badge-info text-white"
+        return "badge badge-info text-info-content"
       default:
         return "badge badge-outline"
     }
@@ -62,7 +62,7 @@ export default function SesionesCurso() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center text-gray-500">
+      <div className="min-h-screen flex flex-col justify-center items-center text-base-content">
         <span className="loading loading-spinner loading-lg text-primary"></span>
         <p className="mt-4">Cargando sesiones...</p>
       </div>
@@ -71,29 +71,29 @@ export default function SesionesCurso() {
 
   if (!cursoInfo) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center text-gray-500">
+      <div className="min-h-screen flex flex-col justify-center items-center text-base-content">
         <p>No se encontró información del curso.</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 🧭 Header */}
-      <header className="bg-gradient-to-r from-indigo-600 to-cyan-500 text-white py-10 px-6 shadow-sm">
+    <div className="min-h-screen bg-base-200">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-primary to-accent text-primary-content py-10 px-6 shadow-sm">
         <div className="container mx-auto max-w-6xl">
           <h1 className="text-4xl font-semibold mb-2">📘 {cursoInfo.curso}</h1>
-          <p className="text-lg text-white/90 mb-2">👨‍🏫 {cursoInfo.profesor}</p>
-          <p className="text-sm text-white/80">
+          <p className="text-lg opacity-90 mb-2">👨‍🏫 {cursoInfo.profesor}</p>
+          <p className="text-sm opacity-80">
             Total de sesiones: <span className="font-semibold">{cursoInfo.total_sesiones}</span>
           </p>
         </div>
       </header>
 
-      {/* 📋 Lista de sesiones */}
+      {/* Lista de sesiones */}
       <main className="container mx-auto px-6 py-10 max-w-6xl">
         {cursoInfo.sesiones?.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg py-10">
+          <p className="text-center opacity-70 text-lg py-10">
             No hay sesiones registradas para este curso 💤
           </p>
         ) : (
@@ -101,20 +101,23 @@ export default function SesionesCurso() {
             {cursoInfo.sesiones.map((sesion, idx) => (
               <div
                 key={idx}
-                className={`card shadow-md hover:shadow-lg transition-all border-l-4 ${
-                  sesion.estado === "concluida"
-                    ? "bg-gray-100 border-gray-400"
-                    : sesion.estado === "en_curso"
-                    ? "bg-green-50 border-green-500"
-                    : "bg-white border-primary"
-                }`}
+                className={`
+                  card shadow-md hover:shadow-lg transition-all border-l-4
+                  ${
+                    sesion.estado === "concluida"
+                      ? "bg-base-300 border-base-content/40"
+                      : sesion.estado === "en_curso"
+                      ? "bg-success/10 border-success"
+                      : "bg-base-100 border-primary"
+                  }
+                `}
               >
                 <div className="card-body md:flex-row md:items-center md:justify-between">
                   <div className="space-y-2">
-                    <h3 className="font-bold text-lg text-gray-800">{sesion.titulo}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{sesion.descripcion}</p>
+                    <h3 className="font-bold text-lg">{sesion.titulo}</h3>
+                    <p className="opacity-80 text-sm leading-relaxed">{sesion.descripcion}</p>
 
-                    <div className="text-sm text-gray-600 flex flex-wrap gap-4">
+                    <div className="text-sm opacity-80 flex flex-wrap gap-4">
                       <span>📅 {formatDate(sesion.hora_inicio)}</span>
                       <span>
                         🕐 {formatIndividualDate(sesion.hora_inicio, "hour")}:
@@ -127,8 +130,8 @@ export default function SesionesCurso() {
                     </div>
                   </div>
 
-                  {/* Acción */}
-                  <div className="flex flex-col md:items-end gap-3">
+                  {/* Acciones */}
+                  <div className="flex flex-col md:items-end gap-3 mt-4 md:mt-0">
                     <div className={getEstadoBadge(sesion.estado)}>
                       {sesion.estado === "en_curso"
                         ? "En curso"
@@ -145,8 +148,14 @@ export default function SesionesCurso() {
                         🚀 Unirse
                       </Link>
                     )}
-                    {rol == "Profesor" && (
-                      <Link to={`/profesor/sesion/${sesion.sesion_id}/participantes`} className="btn btn-outline btn-primary btn-sm mt-4 md:mt-0 md:flex-shrink-0">Participantes</Link>
+
+                    {rol === "Profesor" && (
+                      <Link
+                        to={`/profesor/sesion/${sesion.sesion_id}/participantes`}
+                        className="btn btn-outline btn-primary btn-sm"
+                      >
+                        Participantes
+                      </Link>
                     )}
                   </div>
                 </div>
@@ -155,18 +164,15 @@ export default function SesionesCurso() {
           </div>
         )}
 
-        {/* 🔙 Volver */}
+        {/* Volver */}
         <div className="mt-10 text-center">
-          <button
-            onClick={() => navigate(-1)}
-            className="btn btn-outline btn-primary"
-          >
+          <button onClick={() => navigate(-1)} className="btn btn-outline btn-primary">
             ← Volver
           </button>
         </div>
       </main>
 
-      {/* 🔔 Modal de notificación */}
+      {/* Modal notificación */}
       {notification && (
         <NotificationModal
           isOpen={true}
@@ -178,4 +184,3 @@ export default function SesionesCurso() {
     </div>
   )
 }
-

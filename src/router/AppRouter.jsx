@@ -27,10 +27,11 @@ import CallPage from "../pages/CallPage";
 import CreateCallPage from "../pages/teacher/CrearCall";
 import ParticipantesSesion from "../pages/teacher/ParticipantesSesion";
 import SesionesCurso from "../pages/SesionesCurso";
+import AccountActivated from "../pages/AccountActivited";
 
 const Layout = ({ children }) => {
     const location = useLocation();
-    const hideNavbar = ["/login", "/register"].includes(location.pathname) || location.pathname.startsWith("/call/");
+    const hideNavbar = ["/login", "/register", "/cuenta-activada"].includes(location.pathname) || location.pathname.startsWith("/call/");
     const hideFooter = location.pathname.startsWith("/call/");
     return (
         <>
@@ -50,6 +51,7 @@ export const AppRouter = () => {
                         <Route path="/" element={<Navigate to="/login" />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/cuenta-activada" element={<AccountActivated />} />
 
                         <Route
                             path="/admin"

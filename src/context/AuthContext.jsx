@@ -29,23 +29,14 @@ export const AuthProvider = ({ children }) => {
                 user_id: data.user_id,
                 nombre: data.nombre,
             });
+        } catch (err) {
+            console.warn("Error verificando token", err);
 
-            // 🔄 Redirigir a su dashboard correspondiente
-            switch (data.rol.toLowerCase()) {
-                case "administrador":
-                    navigate("/admin");
-                    break;
-                case "profesor":
-                    navigate("/profesor");
-                    break;
-                case "estudiante":
-                    navigate("/usuario");
-                    break;
-                default:
-                    navigate("/");
+            if (err instanceof TypeError) {
+                // Error de red, no cierres sesión
+                return;
             }
-        } catch {
-            // Token expirado o inválido
+
             localStorage.removeItem("token");
             setUser(null);
         } finally {
@@ -63,14 +54,15 @@ export const AuthProvider = ({ children }) => {
         try {
             const token = localStorage.getItem("token");
             if (token) {
-                await fetch(url + `/auth/logout`, {
+                const res = await fetch(url + `/auth/logout`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                if (token) localStorage.removeItem("token");
+                if (!res.ok) throw new Error();
+                else localStorage.removeItem("token");
             }
         } catch (err) {
             console.error("Error cerrando sesión:", err);

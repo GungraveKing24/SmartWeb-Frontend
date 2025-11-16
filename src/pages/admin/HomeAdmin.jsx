@@ -142,7 +142,7 @@ export default function AdminHome() {
                 <section>
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-bold border-l-4 border-primary pl-3">Solicitudes Pendientes</h2>
-                        <button className="link link-primary font-semibold" onClick={() => navigate("/admin/instructores")}>
+                        <button className="link link-primary font-semibold" onClick={() => navigate("/verificar-instructores")}>
                             Ver todas →
                         </button>
                     </div>

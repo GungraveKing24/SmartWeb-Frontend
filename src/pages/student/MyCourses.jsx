@@ -10,6 +10,7 @@ export default function MyCourses() {
   const [cursos, setCursos] = useState([])
   const [busqueda, setBusqueda] = useState("")
   const [notification, setNotification] = useState(null)
+
   const token = localStorage.getItem("token")
   const url = import.meta.env.VITE_BACKEND_URL
   
@@ -27,7 +28,9 @@ export default function MyCourses() {
       const res = await fetch(url + `/students/courses/active`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      if (!res.ok) throw new Error("Error al cargar los cursos.")
+
+      if (!res.ok) throw new Error("Error al cargar cursos")
+
       const data = await res.json()
       setCursos(data || [])
     } catch (err) {
@@ -46,47 +49,52 @@ export default function MyCourses() {
   const getEstadoBadge = (estado) => {
     switch (estado.toLowerCase()) {
       case "activo":
-        return "badge-success text-white"
+        return "badge badge-success text-white"
       case "inactivo":
-        return "badge-neutral text-white"
+        return "badge badge-neutral text-white"
       default:
-        return "badge-ghost"
+        return "badge badge-ghost"
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 🧭 Encabezado */}
-      <header className="bg-gradient-to-r from-indigo-600 to-cyan-500 text-white py-10 px-6 shadow-sm">
+    <div className="min-h-screen bg-base-200">
+
+      {/* HEADER */}
+      <header className="bg-gradient-to-r from-primary to-secondary text-primary-content py-10 px-6 shadow">
         <div className="container mx-auto max-w-6xl">
-          <h1 className="text-4xl font-semibold mb-2">📚 Mis Cursos</h1>
-          <p className="text-lg text-white/90">
+          <h1 className="text-4xl font-bold mb-2">📚 Mis Cursos</h1>
+          <p className="opacity-90 text-lg">
             Aquí puedes ver todos los cursos en los que estás inscrito.
           </p>
         </div>
       </header>
 
-      {/* 🔍 Búsqueda */}
       <main className="container mx-auto px-6 py-10 max-w-6xl">
+
+        {/* BUSQUEDA */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <div className="w-full sm:w-2/3">
-            <label className="block text-gray-700 font-semibold mb-2">Buscar curso:</label>
+            <label className="block text-base-content font-semibold mb-2">
+              Buscar curso:
+            </label>
             <input
               type="text"
               placeholder="Ej: Python, Go, Linux..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-base-100"
             />
           </div>
-          <span className="badge badge-primary p-4 text-white text-base font-medium">
+
+          <span className="badge badge-primary p-4 text-primary-content text-base font-medium">
             {filteredCursos.length} cursos
           </span>
         </div>
 
-        {/* 🧱 Tarjetas */}
+        {/* TARJETAS */}
         {filteredCursos.length === 0 ? (
-          <p className="text-center text-gray-500 py-10 text-lg">
+          <p className="text-center text-base-content/70 py-10 text-lg italic">
             No estás inscrito en ningún curso actualmente 💤
           </p>
         ) : (
@@ -94,45 +102,55 @@ export default function MyCourses() {
             {filteredCursos.map((curso) => (
               <div
                 key={curso.id}
-                className="card bg-white border border-gray-200 shadow-md hover:shadow-lg transition rounded-2xl"
+                className="card bg-base-100 border border-base-300 shadow-md hover:shadow-lg transition rounded-xl"
               >
                 <div className="card-body">
-                  <h2 className="card-title text-gray-800 flex items-center gap-2">
+
+                  {/* TITULO */}
+                  <h2 className="card-title text-base-content flex items-center gap-2">
                     🎓 {curso.titulo}
                   </h2>
-                  <p className="text-gray-600 leading-relaxed line-clamp-3">
+
+                  {/* DESCRIPCIÓN */}
+                  <p className="opacity-70 leading-relaxed line-clamp-3">
                     {curso.descripcion}
                   </p>
 
-                  <div className="mt-4 space-y-1">
-                    <p className="text-sm text-gray-600">
+                  {/* INFO */}
+                  <div className="mt-4 space-y-1 text-sm opacity-80">
+                    <p>
                       📅 <span className="font-medium">Creado:</span>{" "}
                       {formatDate(curso.creacion_curso)}
                     </p>
-                    <p className="text-sm text-gray-600">
-                      👨‍🏫 <span className="font-medium">Profesor ID:</span> {curso.profesor_id}
+                    <p>
+                      👨‍🏫 <span className="font-medium">Profesor ID:</span>{" "}
+                      {curso.profesor_id}
                     </p>
-                    <span className={`badge ${getEstadoBadge(curso.estado_curso)}`}>
+
+                    <span className={getEstadoBadge(curso.estado_curso)}>
                       {curso.estado_curso}
                     </span>
                   </div>
 
+                  {/* BOTÓN */}
                   <div className="card-actions justify-end mt-6">
                     <button
-                      className="btn btn-outline btn-primary"
+                      className="btn btn-primary btn-outline"
                       onClick={() => navigate(`/curso/${curso.id}`)}
                     >
                       Ver Detalles
                     </button>
                   </div>
+
                 </div>
               </div>
             ))}
           </div>
         )}
+
       </main>
 
-      {/* 🔔 Notificaciones */}
+      {/* Notificación */}
       {notification && (
         <NotificationModal
           isOpen={true}
@@ -144,4 +162,3 @@ export default function MyCourses() {
     </div>
   )
 }
-

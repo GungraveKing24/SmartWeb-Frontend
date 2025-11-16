@@ -9,6 +9,7 @@ export default function DescubrirCursos() {
   const [cursos, setCursos] = useState([])
   const [busqueda, setBusqueda] = useState("")
   const [notification, setNotification] = useState(null)
+
   const token = localStorage.getItem("token")
   const url = import.meta.env.VITE_BACKEND_URL
 
@@ -40,7 +41,7 @@ export default function DescubrirCursos() {
 
   const handleInscribirse = async (cursoId, titulo) => {
     try {
-    const res = await fetch(url + `/students/courses/enroll/${cursoId}`, {
+      const res = await fetch(url + `/students/courses/enroll/${cursoId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -52,13 +53,12 @@ export default function DescubrirCursos() {
         message: `🎉 Te has inscrito exitosamente en "${titulo}"`,
       })
 
-      // Opcional: remover curso de la lista
       setCursos((prev) => prev.filter((c) => c.id !== cursoId))
     } catch (error) {
       console.error(error)
       setNotification({
         type: "error",
-        message: "⚠️ No se pudo completar la inscripción. Inténtalo más tarde.",
+        message: "⚠️ No se pudo completar la inscripción.",
       })
     }
   }
@@ -68,38 +68,42 @@ export default function DescubrirCursos() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 🧭 Encabezado */}
-      <header className="bg-gradient-to-r from-indigo-600 to-cyan-500 text-white py-10 px-6 shadow-sm">
-        <div className="container mx-auto max-w-6xl">
-          <h1 className="text-4xl font-semibold mb-2">🎓 Descubre Nuevos Cursos</h1>
-          <p className="text-lg text-white/90">
-            Explora los cursos disponibles e inscríbete para comenzar a aprender.
+    <div className="min-h-screen bg-base-200">
+
+      {/* HEADER */}
+      <header className="bg-gradient-to-r from-primary to-accent text-primary-content py-10 px-6 shadow">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-4xl font-bold mb-2">🎓 Descubre Nuevos Cursos</h1>
+          <p className="opacity-90 text-lg">
+            Explora cursos disponibles e inscríbete para empezar a aprender.
           </p>
         </div>
       </header>
 
-      {/* 🔍 Barra de búsqueda */}
-      <main className="container mx-auto px-6 py-10 max-w-6xl">
+      <main className="max-w-6xl mx-auto px-6 py-10">
+
+        {/* BÚSQUEDA */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <div className="w-full sm:w-2/3">
-            <label className="block text-gray-700 font-semibold mb-2">Buscar curso:</label>
+            <label className="font-semibold mb-2 block">Buscar curso:</label>
+
             <input
               type="text"
-              placeholder="Ej: Python, Redes, Matemáticas..."
+              placeholder="Ej: Python, Matemáticas, Redes..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-base-100"
             />
           </div>
-          <span className="badge badge-primary p-4 text-white text-base font-medium">
+
+          <span className="badge badge-primary badge-lg">
             {filteredCursos.length} disponibles
           </span>
         </div>
 
-        {/* 🧱 Grid de cursos */}
+        {/* GRID DE CURSOS */}
         {filteredCursos.length === 0 ? (
-          <p className="text-center text-gray-500 py-10 text-lg">
+          <p className="text-center opacity-70 py-10 text-lg">
             No hay cursos disponibles o que coincidan con tu búsqueda 💤
           </p>
         ) : (
@@ -107,27 +111,31 @@ export default function DescubrirCursos() {
             {filteredCursos.map((curso) => (
               <div
                 key={curso.id}
-                className="card bg-white border border-gray-200 shadow-md hover:shadow-lg transition rounded-2xl"
+                className="card bg-base-100 border border-base-300 shadow-md hover:shadow-xl transition rounded-xl"
               >
                 <div className="card-body">
-                  <h2 className="card-title text-gray-800 flex items-center gap-2">
+
+                  <h2 className="card-title flex items-center gap-2">
                     📘 {curso.titulo}
                   </h2>
-                  <p className="text-gray-600 leading-relaxed">{curso.descripcion}</p>
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-500">
-                      👨‍🏫 <span className="font-medium">{curso.profesor}</span>
-                    </p>
+
+                  <p className="opacity-80">
+                    {curso.descripcion}
+                  </p>
+
+                  <div className="mt-3 text-sm opacity-70">
+                    👨‍🏫 <span className="font-medium">{curso.profesor}</span>
                   </div>
 
                   <div className="card-actions justify-end mt-6">
                     <button
-                      className="btn btn-primary text-white"
+                      className="btn btn-primary"
                       onClick={() => handleInscribirse(curso.id, curso.titulo)}
                     >
                       Inscribirse
                     </button>
                   </div>
+
                 </div>
               </div>
             ))}
@@ -135,7 +143,7 @@ export default function DescubrirCursos() {
         )}
       </main>
 
-      {/* 🔔 Modal de notificación */}
+      {/* NOTIFICACIÓN */}
       {notification && (
         <NotificationModal
           isOpen={true}
@@ -147,4 +155,3 @@ export default function DescubrirCursos() {
     </div>
   )
 }
-

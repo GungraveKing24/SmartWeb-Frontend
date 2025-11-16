@@ -14,54 +14,48 @@ export default function CreateCallPage() {
   const [copied, setCopied] = useState(false);
 
   const token = localStorage.getItem("token");
+  const url = import.meta.env.VITE_BACKEND_URL;
 
-  const url = import.meta.env.VITE_BACKEND_URL
-
-  // 🔹 Cargar cursos activos del profesor
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await fetch(url + `/courses/active/only`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        setCourses(data);
+        setCourses(data ?? []);
       } catch (err) {
         console.error("Error al obtener cursos:", err);
+        setCourses([]);
       }
     };
     fetchCourses();
-  }, []);
+  }, [token, url]);
 
-  // 🔹 Crear llamada
   const handleCreateCall = async () => {
     if (!selectedCourse || !titulo || !horaInicio || !horaFin) {
-      alert("Por favor completa todos los campos obligatorios.");
+      alert("Completa todos los campos obligatorios.");
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch(
-        url + `/hope/createCall`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            curso_id: selectedCourse,
-            titulo,
-            descripcion,
-            hora_inicio: horaInicio,
-            hora_fin: horaFin,
-            origen: window.location.origin
-          }),
-        }
-      );
+      const res = await fetch(url + `/hope/createCall`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          curso_id: selectedCourse,
+          titulo,
+          descripcion,
+          hora_inicio: horaInicio,
+          hora_fin: horaFin,
+          //origen: Creo que tendria que ser la url del frontend cuando ya esta desplegado
+          origen: window.location.origin,
+        }),
+      });
 
       if (!res.ok) throw new Error("Error al crear la llamada");
       const data = await res.json();
@@ -71,120 +65,120 @@ export default function CreateCallPage() {
       alert("Ocurrió un error al crear la llamada");
     } finally {
       setLoading(false);
+      clearForm()
     }
   };
 
   const handleCopy = () => {
-    const url = createdLink;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(createdLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const clearForm = () => {
+    setSelectedCourse("")
+    setTitulo("")
+    setDescripcion("")
+    setHoraInicio("")
+    setHoraFin("")
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200 p-6">
-      <div className="w-full max-w-lg bg-base-100 shadow-2xl rounded-2xl p-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <FaVideo className="text-primary" />
-          Crear enlace de videollamada
+    <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl card bg-base-100 shadow-xl p-8">
+        <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+          <FaVideo className="text-primary text-4xl" />
+          Crear nueva sesión de videollamada
         </h2>
 
-        {/* Formulario */}
-        <div className="form-control mb-4">
-          <label className="label">
-            <span className="label-text font-semibold">Curso</span>
-          </label>
-          <select
-            className="select select-bordered w-full"
-            value={selectedCourse}
-            onChange={(e) => setSelectedCourse(e.target.value)}
+        <div className="space-y-6">
+          <div className="form-control">
+            <label className="label font-semibold">Curso</label>
+            <select
+              className="select select-bordered w-full"
+              value={selectedCourse}
+              onChange={(e) => setSelectedCourse(e.target.value)}
+            >
+              {courses.length === 0 ? (
+                <option value="">No tienes cursos</option>
+              ) : (
+                <option value="">Selecciona un curso...</option>
+              )}
+              {(courses || []).map((curso) => (
+                <option key={curso.id} value={curso.id}>
+                  {curso.titulo}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-control">
+            <label className="label font-semibold">Título</label>
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              placeholder="Ej. Clase 3 - Introducción a Redes"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+            />
+          </div>
+
+          <div className="form-control">
+            <label className="label font-semibold">Descripción</label>
+            <textarea
+              className="textarea textarea-bordered w-full"
+              placeholder="Describe brevemente tu sesión..."
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="form-control">
+              <label className="label font-semibold">Hora inicio</label>
+              <input
+                type="datetime-local"
+                className="input input-bordered w-full"
+                value={horaInicio}
+                onChange={(e) => setHoraInicio(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label font-semibold">Hora fin</label>
+              <input
+                type="datetime-local"
+                className="input input-bordered w-full"
+                value={horaFin}
+                onChange={(e) => setHoraFin(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button
+            className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
+            onClick={handleCreateCall}
+            disabled={loading}
           >
-            <option value="">-- Selecciona un curso --</option>
-            {courses.map((curso) => (
-              <option key={curso.id} value={curso.id}>
-                {curso.titulo}
-              </option>
-            ))}
-          </select>
+            {loading ? "Creando..." : "Crear enlace"}
+          </button>
         </div>
 
-        <div className="form-control mb-4">
-          <label className="label">
-            <span className="label-text font-semibold">Título de la sesión</span>
-          </label>
-          <input
-            type="text"
-            placeholder="Ej. Clase sobre redes TCP/IP"
-            className="input input-bordered w-full"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-          />
-        </div>
-
-        <div className="form-control mb-4">
-          <label className="label">
-            <span className="label-text font-semibold">Descripción</span>
-          </label>
-          <textarea
-            placeholder="Escribe una breve descripción de la clase..."
-            className="textarea textarea-bordered w-full"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-semibold">Hora de inicio</span>
-            </label>
-            <input
-              type="datetime-local"
-              className="input input-bordered w-full"
-              value={horaInicio}
-              onChange={(e) => setHoraInicio(e.target.value)}
-            />
-          </div>
-
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-semibold">Hora de fin</span>
-            </label>
-            <input
-              type="datetime-local"
-              className="input input-bordered w-full"
-              value={horaFin}
-              onChange={(e) => setHoraFin(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <button
-          className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
-          onClick={handleCreateCall}
-          disabled={loading}
-        >
-          {loading ? "Creando llamada..." : "Crear enlace"}
-        </button>
-
-        {/* Mostrar enlace creado */}
         {createdLink && (
-          <div className="mt-6 p-4 bg-success bg-opacity-10 rounded-xl border border-success/30">
-            <h3 className="font-semibold text-success mb-2 flex items-center gap-2">
-              <FaCheck /> Llamada creada con éxito
+          <div className="mt-10 alert bg-primary/10 border border-primary/40 p-6 rounded-xl flex flex-col gap-4">
+            <h3 className="font-semibold text-primary flex items-center gap-2">
+              <FaCheck /> Sesión creada con éxito
             </h3>
-            <div className="flex items-center justify-between bg-base-300 p-2 rounded-md">
-              <code className="text-sm break-all">
-                {createdLink}
-              </code>
-              <div className="flex gap-2 ml-2">
+
+            <div className="p-4 bg-base-100 rounded-lg border flex items-center justify-between">
+              <code className="break-all text-sm">{createdLink}</code>
+
+              <div className="flex gap-2 ml-4">
                 <button className="btn btn-sm btn-outline" onClick={handleCopy}>
                   {copied ? "Copiado!" : <FaCopy />}
                 </button>
-                <Link
-                  to={createdLink}
-                  className="btn btn-sm btn-outline"
-                >
+
+                <Link to={createdLink} className="btn btn-sm btn-primary">
                   IR
                 </Link>
               </div>
