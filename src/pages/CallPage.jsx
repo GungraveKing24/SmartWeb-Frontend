@@ -24,12 +24,14 @@ import "stream-chat-react/dist/css/v2/index.css";
 import { useParams } from "react-router-dom";
 import "./CallPage.css";
 import Logo from "../assets/logo.png";
+import NotificationModal from "../components/NotificationModal";
 
 export default function CallPage() {
   const [client, setClient] = useState(null);
   const [call, setCall] = useState(null);
   const [chatClient, setChatClient] = useState(null);
   const [channel, setChannel] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   const [showChat, setShowChat] = useState(false);
   const [showParticipantList, setShowParticipantList] = useState(false);
@@ -118,7 +120,7 @@ export default function CallPage() {
         setChatClient(chat);
         setChannel(ch);
       } catch (err) {
-        alert("Error al conectar a la llamada");
+        setNotification({ type: "error", message: "Error ala conectar a la llamada" })
       }
     };
 
@@ -211,6 +213,17 @@ export default function CallPage() {
             )}
 
           </div>
+
+
+          {/* NOTIFICACIÓN */}
+          {notification && (
+            <NotificationModal
+              isOpen={true}
+              type={notification.type}
+              message={notification.message}
+              onClose={() => setNotification(null)}
+            />
+          )}
         </StreamCall>
       </StreamTheme>
     </StreamVideo>

@@ -76,6 +76,7 @@ export default function SesionesCurso() {
       </div>
     )
   }
+  console.log(cursoInfo)
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -121,9 +122,9 @@ export default function SesionesCurso() {
                       <span>📅 {formatDate(sesion.hora_inicio)}</span>
                       <span>
                         🕐 {formatIndividualDate(sesion.hora_inicio, "hour")}:
-                        {String(formatIndividualDate(sesion.hora_inicio, "minutes")).padStart(2, "0")}{" "}
+                        {formatIndividualDate(sesion.hora_inicio, "minutes")}{" "}
                         - {formatIndividualDate(sesion.hora_fin, "hour")}:
-                        {String(formatIndividualDate(sesion.hora_fin, "minutes")).padStart(2, "0")}
+                        {formatIndividualDate(sesion.hora_fin, "minutes")}
                       </span>
                       <span>👥 {sesion.participantes} participantes</span>
                       <span>🎞️ {sesion.calidad_video}</span>

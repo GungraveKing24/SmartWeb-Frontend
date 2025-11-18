@@ -5,6 +5,7 @@ import { LogOut, Home, Users, BookOpen, GraduationCap, Search } from "lucide-rea
 import Logo from "../assets/logo.png"
 import { useAuth } from "../hooks/useAuth"
 import ThemeSelector from "./ThemeSelector"
+import NotificationBell from "./NotificationBell"
 
 export default function Navbar() {
     const { user, logout } = useAuth()
@@ -86,6 +87,10 @@ export default function Navbar() {
                     )}
 
                     <ThemeSelector />
+
+                    {(role === "profesor" || role === "estudiante") && (
+                      <NotificationBell />
+                    )}
 
                     {role && (
                         <li>

@@ -28,6 +28,7 @@ import CreateCallPage from "../pages/teacher/CrearCall";
 import ParticipantesSesion from "../pages/teacher/ParticipantesSesion";
 import SesionesCurso from "../pages/SesionesCurso";
 import AccountActivated from "../pages/AccountActivited";
+import Notifications from "../pages/Notificaciones";
 
 const Layout = ({ children }) => {
     const location = useLocation();
@@ -74,6 +75,15 @@ export const AppRouter = () => {
                             element={
                                 <ProtectedRoute allowedRoles={["estudiante"]}>
                                     <UsuarioHome />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/notificaciones"
+                            element={
+                                <ProtectedRoute allowedRoles={["estudiante", "administrador", "profesor"]}>
+                                    <Notifications />
                                 </ProtectedRoute>
                             }
                         />

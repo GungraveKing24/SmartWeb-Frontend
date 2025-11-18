@@ -9,7 +9,6 @@ export default function GestionarUsuarios() {
   const [usuarios, setUsuarios] = useState([])
   const [busqueda, setBusqueda] = useState("")
   const [filtroRol, setFiltroRol] = useState("todos")
-  const [resetUser, setResetUser] = useState(null)
   const [confirmModal, setConfirmModal] = useState(null)
   const [notification, setNotification] = useState(null)
 
@@ -30,7 +29,7 @@ export default function GestionarUsuarios() {
       const res = await fetch(url + `/administrador/users`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      if (!res.ok) throw new Error("Error")
+      if (!res.ok) throw new Error("Error al cargar usuarios")
       setUsuarios(await res.json())
     } catch (err) {
       console.error(err)
@@ -38,7 +37,7 @@ export default function GestionarUsuarios() {
     }
   }
 
-  // DaisyUI: estilos por rol
+  // Estilo para el rol
   const getRolBadge = (rol) => {
     switch (rol.toLowerCase()) {
       case "profesor":
@@ -56,45 +55,47 @@ export default function GestionarUsuarios() {
   const filteredUsuarios = usuarios.filter((u) => {
     const text = busqueda.toLowerCase()
     const byRol = filtroRol === "todos" || u.rol.toLowerCase() === filtroRol
-    const byText = u.nombre.toLowerCase().includes(text) || u.email.toLowerCase().includes(text)
+    const byText =
+      u.nombre.toLowerCase().includes(text) || u.email.toLowerCase().includes(text)
     return byRol && byText
   })
 
-  const handleResetPassword = (user) => setResetUser(user)
-
-  const confirmResetPassword = () => {
-    setNotification({
-      type: "success",
-      message: `🔑 Contraseña de ${resetUser.nombre} reseteada y enviada por correo.`,
-    })
-    setResetUser(null)
-  }
-
-  const handleDeleteUser = (user) => {
+  const handleDeactivateUser = (user) => {
     setConfirmModal({
-      type: "delete",
-      title: `Eliminar usuario: ${user.nombre}`,
-      message: "Esta acción no se puede deshacer.",
+      type: "deactivate",
+      title: `Desactivar Usuario`,
+      message: `¿Deseas desactivar la cuenta de ${user.nombre}?`,
       userId: user.id,
       nombre: user.nombre,
     })
   }
 
   const processAction = async (action) => {
-    if (action.type === "delete") {
+    if (action.type === "deactivate") {
       try {
         const res = await fetch(url + `/administrador/users/${action.userId}`, {
-          method: "DELETE",
+          method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         })
 
-        if (!res.ok) throw new Error()
+        if (!res.ok) throw new Error("No se pudo desactivar")
 
-        setUsuarios((prev) => prev.filter((u) => u.id !== action.userId))
+        // Actualizar estado local
+        setUsuarios((prev) =>
+          prev.map((u) =>
+            u.id === action.userId ? { ...u, status: "Inactivo" } : u
+          )
+        )
 
-        setNotification({ type: "success", message: `🗑️ Usuario ${action.nombre} eliminado.` })
-      } catch {
-        setNotification({ type: "error", message: "❌ Error al eliminar usuario." })
+        setNotification({
+          type: "success",
+          message: `⚠️ Usuario ${action.nombre} ha sido desactivado.`,
+        })
+      } catch (error) {
+        setNotification({
+          type: "error",
+          message: "❌ No se pudo desactivar el usuario.",
+        })
       }
     }
 
@@ -180,22 +181,23 @@ export default function GestionarUsuarios() {
                     <tr key={u.id} className="hover:bg-base-200 transition">
                       <td className="font-semibold">{u.nombre}</td>
                       <td>{u.email}</td>
+                      <td><span className={getRolBadge(u.rol)}>{u.rol}</span></td>
                       <td>
-                        <span className={getRolBadge(u.rol)}>{u.rol}</span>
+                        {u.status === "Inactivo" ? (
+                          <span className="badge badge-error">Inactivo</span>
+                        ) : (
+                          <span className="badge badge-success">Activo</span>
+                        )}
                       </td>
-                      <td>{u.status || "—"}</td>
 
                       {/* Acciones */}
                       <td className="text-center">
-                        <div className="flex justify-center gap-2">
-
-                          <button
-                            className="btn btn-error btn-sm btn-outline"
-                            onClick={() => handleDeleteUser(u)}
-                          >
-                            🗑️ Eliminar
-                          </button>
-                        </div>
+                        <button
+                          className="btn btn-warning btn-sm btn-outline"
+                          onClick={() => handleDeactivateUser(u)}
+                        >
+                          🚫 Desactivar
+                        </button>
                       </td>
 
                     </tr>
@@ -207,39 +209,18 @@ export default function GestionarUsuarios() {
         </section>
       </main>
 
-      {/* MODAL RESET PASSWORD */}
-      {resetUser && (
-        <dialog open className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">🔑 Resetear contraseña</h3>
-            <p className="py-4">
-              ¿Deseas resetear la contraseña de <b>{resetUser.nombre}</b>?
-            </p>
-
-            <div className="modal-action">
-              <button className="btn btn-outline" onClick={() => setResetUser(null)}>
-                Cancelar
-              </button>
-              <button className="btn btn-warning" onClick={confirmResetPassword}>
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
-
-      {/* MODAL ELIMINAR */}
+      {/* MODAL CONFIRMACIÓN */}
       {confirmModal && (
         <dialog open className="modal modal-open">
           <div className="modal-box">
-            <h3 className="font-bold text-lg text-error">{confirmModal.title}</h3>
+            <h3 className="font-bold text-lg">{confirmModal.title}</h3>
             <p className="py-4 opacity-80">{confirmModal.message}</p>
 
             <div className="modal-action">
               <button className="btn btn-outline" onClick={() => setConfirmModal(null)}>
                 Cancelar
               </button>
-              <button className="btn btn-error" onClick={() => processAction(confirmModal)}>
+              <button className="btn btn-warning" onClick={() => processAction(confirmModal)}>
                 Confirmar
               </button>
             </div>
@@ -257,3 +238,4 @@ export default function GestionarUsuarios() {
     </div>
   )
 }
+

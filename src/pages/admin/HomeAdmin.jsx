@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { formatDate } from "../../helpers/date"
+import NotificationModal from "../../components/NotificationModal"
 
 export default function AdminHome() {
     const navigate = useNavigate()
@@ -11,6 +12,7 @@ export default function AdminHome() {
     const [cursos, setCursos] = useState([])
     const [selectedInstructor, setSelectedInstructor] = useState(null)
     const [modalType, setModalType] = useState(null)
+    const [notification, setNotification] = useState(null)
 
     const token = localStorage.getItem("token")
 
@@ -18,7 +20,7 @@ export default function AdminHome() {
 
     useEffect(() => {
         if (!token) {
-            alert("No estás autenticado. Inicia sesión.", "error")
+            setNotification({ type: "error", message: "No estás autenticado. Inicia sesión." })
             navigate("/login")
             return
         }
@@ -41,7 +43,7 @@ export default function AdminHome() {
             setCursos(await cursosRes.json())
         } catch (err) {
             console.error(err)
-            alert("Error al cargar la información.", "error")
+            setNotification({ type: "error", message: "No estás autenticado. Inicia sesión." })
         }
     }
 
@@ -62,13 +64,14 @@ export default function AdminHome() {
 
             if (!res.ok) throw new Error("Error en la acción")
 
-            alert(
-                action === "approve" ? `✅ Instructor ${name} aprobado correctamente.` : `❎ Solicitud de ${name} rechazada.`,
-                "success",
-            )
+            if (action === "approve"){
+              setNotification({ type: "success", message: `✅ Instructor ${name} aprobado correctamente.` })
+            } else {
+              setNotification({ type: "error", message: `❎ Solicitud de ${name} rechazada.` })
+            }
             setProfesores((prev) => prev.filter((p) => p.id !== id))
         } catch {
-            alert("❌ Error al procesar la solicitud.", "error")
+            setNotification({ type: "error", message: "Error al procesar la solicitud" })
         } finally {
             setModalType(null)
             setSelectedInstructor(null)
@@ -302,6 +305,17 @@ export default function AdminHome() {
                     </div>
                 </dialog>
             )}
+
+
+      {/* NOTIFICACIÓN */}
+      {notification && (
+        <NotificationModal
+          isOpen={true}
+          type={notification.type}
+          message={notification.message}
+          onClose={() => setNotification(null)}
+        />
+      )}
         </div>
     )
 }
