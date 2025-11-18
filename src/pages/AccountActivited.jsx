@@ -6,11 +6,12 @@ export default function ActivateAccount() {
   const { token } = useParams();
   const [status, setStatus] = useState("loading"); 
   const [message, setMessage] = useState("");
+  const url = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     async function activate() {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/auth/activate/${token}`);
+        const res = await fetch(url + `/auth/activate/${token}`);
 
         if (res.ok) {
           setStatus("success");

@@ -97,7 +97,6 @@ export default function HomeTeacher() {
       <section className="container mx-auto px-5 mb-16 max-w-6xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Próximas Sesiones</h2>
-          <a className="link link-primary font-semibold">Ver todas</a>
         </div>
 
         <div className="space-y-4">
