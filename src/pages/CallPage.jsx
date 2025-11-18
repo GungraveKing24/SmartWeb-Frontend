@@ -36,7 +36,8 @@ export default function CallPage() {
   const [showChat, setShowChat] = useState(false);
   const [showParticipantList, setShowParticipantList] = useState(false);
 
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   const params = useParams();
   const apiKey = "fv5e9c5j23md";
@@ -53,14 +54,17 @@ export default function CallPage() {
   const url = import.meta.env.VITE_BACKEND_URL;
 
   const tokenStreamProvider = async () => {
-    const response = await fetch(url + `/hope/joinCall?curso_id=${params.cursoId}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${JWT}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ curso_id: params.cursoId }),
-    });
+    const response = await fetch(
+      url + `/hope/joinCall?curso_id=${params.cursoId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${JWT}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ curso_id: params.cursoId }),
+      }
+    );
 
     if (!response.ok) throw new Error("Unauthorized");
 
@@ -68,26 +72,26 @@ export default function CallPage() {
     return data.getStreamToken;
   };
 
-  // ⭐ Barra dinámica real
+  // NAVBAR + controles dinámicos
   useEffect(() => {
     let timeout;
 
     const handleMove = () => {
       setShowControls(true);
+      setShowNavbar(true);
 
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         setShowControls(false);
+        setShowNavbar(false);
       }, 2000);
     };
 
     window.addEventListener("mousemove", handleMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMove);
-    };
+    return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
+  // Inicializar videollamada + chat
   useEffect(() => {
     const init = async () => {
       if (!params.callId || !params.cursoId) return;
@@ -106,7 +110,6 @@ export default function CallPage() {
 
         const callInstance = videoClient.call("default", params.callId);
         await callInstance.join({ create: false });
-
         setCall(callInstance);
 
         const chat = StreamChat.getInstance(apiKey);
@@ -115,12 +118,15 @@ export default function CallPage() {
         const ch = chat.channel("messaging", params.callId, {
           members: [{ user_id: userId }],
         });
-
         await ch.watch();
+
         setChatClient(chat);
         setChannel(ch);
       } catch (err) {
-        setNotification({ type: "error", message: "Error ala conectar a la llamada" })
+        setNotification({
+          type: "error",
+          message: "Error al conectar a la llamada",
+        });
       }
     };
 
@@ -133,7 +139,11 @@ export default function CallPage() {
   }, []);
 
   if (!client || !call || !chatClient || !channel)
-    return <div className="loading-container"><div className="loader"></div></div>;
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+      </div>
+    );
 
   return (
     <StreamVideo client={client}>
@@ -141,8 +151,8 @@ export default function CallPage() {
         <StreamCall call={call}>
           <div className="meeting-container">
 
-            {/* HEADER */}
-            <header className="meeting-header">
+            {/* NAVBAR SUPERIOR */}
+            <header className={`meeting-header ${showNavbar ? "show" : "hide"}`}>
               <div className="meeting-info">
                 <img src={Logo} className="meeting-logo" />
                 <h2 className="meeting-title">SMARTWEB Meet</h2>
@@ -152,7 +162,13 @@ export default function CallPage() {
                 <button onClick={() => setShowChat(!showChat)}>💬</button>
 
                 {rol === "Profesor" && (
-                  <button onClick={() => setShowParticipantList(!showParticipantList)}>👥</button>
+                  <button
+                    onClick={() =>
+                      setShowParticipantList(!showParticipantList)
+                    }
+                  >
+                    👥
+                  </button>
                 )}
 
                 <button
@@ -172,9 +188,21 @@ export default function CallPage() {
               <SpeakerLayout />
             </main>
 
-            {/* ⭐ CONTROLES DINÁMICOS ⭐ */}
+            {/* CONTROLES */}
             <footer className={`sw-controls ${showControls ? "show" : "hide"}`}>
-              <CallControls />
+              <CallControls
+                onLeave={() => {
+                  call.leave();
+                  window.location.href = "/";
+                }}
+                overrides={{
+                  RecordCallButton: () => null,
+                  StartRecordingButton: () => null,
+                  StopRecordingButton: () => null,
+                  RecordingButton: () => null,
+                  ToggleScreenShareButton: () => null,
+                }}
+              />
             </footer>
 
             {/* CHAT */}
@@ -203,7 +231,9 @@ export default function CallPage() {
               <div className="floating-chat animate-fade">
                 <div className="floating-chat-header">
                   <span>Participantes</span>
-                  <button onClick={() => setShowParticipantList(false)}>✕</button>
+                  <button onClick={() => setShowParticipantList(false)}>
+                    ✕
+                  </button>
                 </div>
 
                 <div className="floating-chat-body">
@@ -211,11 +241,9 @@ export default function CallPage() {
                 </div>
               </div>
             )}
-
           </div>
 
-
-          {/* NOTIFICACIÓN */}
+          {/* NOTIFICACIONES */}
           {notification && (
             <NotificationModal
               isOpen={true}
