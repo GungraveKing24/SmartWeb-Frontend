@@ -111,6 +111,18 @@ const HomeStudent = () => {
                 </p>
               </div>
 
+              {/* STATUS */}
+              {session.estado === "concluida" && (
+                <div className="badge badge-success badge-lg text-white">
+                  CONCLUIDA
+                </div>
+              )}
+              {session.estado === "futura" && (
+                <div className="badge badge-info badge-lg text-white">
+                  FUTURA
+                </div>
+              )}
+
               {/* BOTÓN */}
               {session.estado !== "concluida" && session.estado !== "futura" && (
                 <Link

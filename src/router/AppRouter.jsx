@@ -14,6 +14,7 @@ import GestionarCursos from "../pages/admin/GestionarCursos";
 import AboutUs from "../pages/AboutUs";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Terms from "../pages/Terms";
+import ActivateAccount from "../pages/AccountActivited";
 
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { AuthProvider } from "../context/AuthContext";
@@ -27,7 +28,6 @@ import CallPage from "../pages/CallPage";
 import CreateCallPage from "../pages/teacher/CrearCall";
 import ParticipantesSesion from "../pages/teacher/ParticipantesSesion";
 import SesionesCurso from "../pages/SesionesCurso";
-import AccountActivated from "../pages/AccountActivited";
 import Notifications from "../pages/Notificaciones";
 
 const Layout = ({ children }) => {
@@ -52,7 +52,6 @@ export const AppRouter = () => {
                         <Route path="/" element={<Navigate to="/login" />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/cuenta-activada" element={<AccountActivated />} />
 
                         <Route
                             path="/admin"
@@ -175,6 +174,7 @@ export const AppRouter = () => {
                             }
                         />
 
+                        <Route path="/activate/:token" element={<ActivateAccount />} />
                         <Route path="/about" element={<AboutUs />} />
                         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                         <Route path="/terms" element={<Terms />} />
