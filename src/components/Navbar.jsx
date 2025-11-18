@@ -1,96 +1,69 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { LogOut, Home, Users, BookOpen, GraduationCap, Search } from "lucide-react"
+import { LogOut, Home, Users, BookOpen, GraduationCap, Search, Menu } from "lucide-react"
 import Logo from "../assets/logo.png"
 import { useAuth } from "../hooks/useAuth"
 import ThemeSelector from "./ThemeSelector"
 import NotificationBell from "./NotificationBell"
+import { useState } from "react"
 
 export default function Navbar() {
     const { user, logout } = useAuth()
     const role = user?.role?.toLowerCase()
     const home = role == "administrador" ? "/admin" : (role == "profesor" ? "/profesor" : "/usuario")
 
+    const [open, setOpen] = useState(false)
+
     return (
-        <nav className="navbar bg-base-100 border-b border-base-200 px-6 py-4 shadow-sm">
+        <nav className="navbar bg-base-100 border-b border-base-200 px-4 shadow-sm">
             <div className="flex-1">
                 <Link
                     to={home}
                     className="flex items-center gap-3 text-xl font-bold text-primary hover:opacity-80 transition-opacity"
                 >
                     <img src={Logo || "/placeholder.svg"} alt="SMARTWEB Logo" className="w-10 h-10 rounded-lg" />
-                    <span>SMARTWEB</span>
+                    <span className="hidden sm:flex">SMARTWEB</span>
                 </Link>
             </div>
 
-            <div className="flex-none">
+            {/* Mobile Menu Button */}
+            <div className="flex sm:hidden">
+                <button onClick={() => setOpen(!open)} className="btn btn-ghost btn-square">
+                    <Menu size={22} />
+                </button>
+            </div>
+
+            {/* Desktop Menu */}
+            <div className="hidden sm:flex flex-none">
                 <ul className="menu menu-horizontal px-1 gap-1">
                     {role === "administrador" && (
                         <>
-                            <li>
-                                <Link to="/admin" className="gap-2">
-                                    <Home size={18} /> Home
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/gestionar-usuarios" className="gap-2">
-                                    <Users size={18} /> Usuarios
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/verificar-instructores" className="gap-2">
-                                    <GraduationCap size={18} /> Instructores
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/gestionar-cursos" className="gap-2">
-                                    <BookOpen size={18} /> Cursos
-                                </Link>
-                            </li>
+                            <li><Link to="/admin" className="gap-2"><Home size={18} /> Home</Link></li>
+                            <li><Link to="/gestionar-usuarios" className="gap-2"><Users size={18} /> Usuarios</Link></li>
+                            <li><Link to="/verificar-instructores" className="gap-2"><GraduationCap size={18} /> Instructores</Link></li>
+                            <li><Link to="/gestionar-cursos" className="gap-2"><BookOpen size={18} /> Cursos</Link></li>
                         </>
                     )}
 
                     {role === "estudiante" && (
                         <>
-                            <li>
-                                <Link to="/usuario" className="gap-2">
-                                    <Home size={18} /> Inicio
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/usuario/miscursos" className="gap-2">
-                                    <BookOpen size={18} /> Mis Cursos
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/usuario/discover" className="gap-2">
-                                    <Search size={18} /> Descubrir
-                                </Link>
-                            </li>
+                            <li><Link to="/usuario" className="gap-2"><Home size={18} /> Inicio</Link></li>
+                            <li><Link to="/usuario/miscursos" className="gap-2"><BookOpen size={18} /> Mis Cursos</Link></li>
+                            <li><Link to="/usuario/discover" className="gap-2"><Search size={18} /> Descubrir</Link></li>
                         </>
                     )}
 
                     {role === "profesor" && (
                         <>
-                            <li>
-                                <Link to="/profesor" className="gap-2">
-                                    <Home size={18} /> Panel
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/profesor/cursos" className="gap-2">
-                                    <BookOpen size={18} /> Cursos
-                                </Link>
-                            </li>
+                            <li><Link to="/profesor" className="gap-2"><Home size={18} /> Panel</Link></li>
+                            <li><Link to="/profesor/cursos" className="gap-2"><BookOpen size={18} /> Cursos</Link></li>
                         </>
                     )}
 
                     <ThemeSelector />
 
-                    {(role === "profesor" || role === "estudiante") && (
-                      <NotificationBell />
-                    )}
+                    {(role === "profesor" || role === "estudiante") && <NotificationBell />}
 
                     {role && (
                         <li>
@@ -101,6 +74,50 @@ export default function Navbar() {
                     )}
                 </ul>
             </div>
+
+            {/* Mobile Dropdown */}
+            {open && (
+                <div className="absolute top-16 left-0 w-full bg-base-100 border-t border-base-200 shadow-md sm:hidden z-50 animate-fade-in">
+                    <ul className="menu p-4 space-y-2">
+                        {role === "administrador" && (
+                            <>
+                                <li><Link to="/admin" onClick={() => setOpen(false)} className="gap-2"><Home size={18} /> Home</Link></li>
+                                <li><Link to="/gestionar-usuarios" onClick={() => setOpen(false)} className="gap-2"><Users size={18} /> Usuarios</Link></li>
+                                <li><Link to="/verificar-instructores" onClick={() => setOpen(false)} className="gap-2"><GraduationCap size={18} /> Instructores</Link></li>
+                                <li><Link to="/gestionar-cursos" onClick={() => setOpen(false)} className="gap-2"><BookOpen size={18} /> Cursos</Link></li>
+                            </>
+                        )}
+
+                        {role === "estudiante" && (
+                            <>
+                                <li><Link to="/usuario" onClick={() => setOpen(false)} className="gap-2"><Home size={18} /> Inicio</Link></li>
+                                <li><Link to="/usuario/miscursos" onClick={() => setOpen(false)} className="gap-2"><BookOpen size={18} /> Mis Cursos</Link></li>
+                                <li><Link to="/usuario/discover" onClick={() => setOpen(false)} className="gap-2"><Search size={18} /> Descubrir</Link></li>
+                            </>
+                        )}
+
+                        {role === "profesor" && (
+                            <>
+                                <li><Link to="/profesor" onClick={() => setOpen(false)} className="gap-2"><Home size={18} /> Panel</Link></li>
+                                <li><Link to="/profesor/cursos" onClick={() => setOpen(false)} className="gap-2"><BookOpen size={18} /> Cursos</Link></li>
+                            </>
+                        )}
+
+                        <li><ThemeSelector /></li>
+
+                        {(role === "profesor" || role === "estudiante") && <li><NotificationBell /></li>}
+
+                        {role && (
+                            <li>
+                                <button onClick={logout} className="btn btn-error btn-sm w-full">
+                                    <LogOut size={18} /> Cerrar sesión
+                                </button>
+                            </li>
+                        )}
+                    </ul>
+                </div>
+            )}
         </nav>
     )
 }
+

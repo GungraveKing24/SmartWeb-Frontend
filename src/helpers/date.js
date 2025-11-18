@@ -86,3 +86,26 @@ export const formatIndividualDate = (isoDate, type) => {
   }
 };
 
+// ====================================================
+// Partes individuales de la fecha
+// ====================================================
+export const formatIndividualDateNormal = (isoDate, type) => {
+  if (!isoDate) return "";
+
+  const date = new Date(isoDate);
+
+  switch (type) {
+    case "year":
+      return date.getFullYear();
+    case "month":
+      return date.getMonth() + 1;
+    case "day":
+      return date.getDate();
+    case "hour":
+      return date.getHours();
+    case "minutes":
+      return String(date.getMinutes()).padStart(2, "0");
+    default:
+      return "";
+  }
+};

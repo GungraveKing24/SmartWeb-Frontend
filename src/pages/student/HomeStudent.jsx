@@ -3,7 +3,7 @@
 import { BookOpen } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { formatDate, formatIndividualDate } from "../../helpers/date"
+import { formatDate, formatIndividualDateNormal } from "../../helpers/date"
 
 const HomeStudent = () => {
   const JWT = localStorage.getItem("token")
@@ -102,10 +102,10 @@ const HomeStudent = () => {
                 <p className="text-sm opacity-70 mt-2 flex flex-col gap-1">
                   <span>📅 {formatDate(session.hora_inicio)}</span>
                   <span>
-                    🕐 {formatIndividualDate(session.hora_inicio, "hour")}:
-                    {formatIndividualDate(session.hora_inicio, "minutes")} —{" "}
-                    {formatIndividualDate(session.hora_fin, "hour")}:
-                    {formatIndividualDate(session.hora_fin, "minutes")}
+                    🕐 {formatIndividualDateNormal(session.hora_inicio, "hour")}:
+                    {formatIndividualDateNormal(session.hora_inicio, "minutes")} —{" "}
+                    {formatIndividualDateNormal(session.hora_fin, "hour")}:
+                    {formatIndividualDateNormal(session.hora_fin, "minutes")}
                   </span>
                   <span>👨‍🏫 {session.profesor}</span>
                 </p>
