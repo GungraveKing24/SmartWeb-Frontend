@@ -32,13 +32,14 @@ export default function SesionesCurso() {
 
         if (!res.ok) throw new Error("Error al cargar las sesiones.")
         const data = await res.json()
-        setCursoInfo(data)
+        setCursoInfo(data ?? [])
       } catch (err) {
         console.error(err)
         setNotification({
           type: "error",
           message: "❌ Error al cargar las sesiones del curso.",
         })
+        setCursoInfo([])
       } finally {
         setLoading(false)
       }
@@ -69,10 +70,10 @@ export default function SesionesCurso() {
     )
   }
 
-  if (!cursoInfo) {
+  if (!cursoInfo || cursoInfo.message) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center text-base-content">
-        <p>No se encontró información del curso.</p>
+        <p>{cursoInfo.message}</p>
       </div>
     )
   }
@@ -99,7 +100,7 @@ export default function SesionesCurso() {
           </p>
         ) : (
           <div className="space-y-4">
-            {cursoInfo.sesiones.map((sesion, idx) => (
+            {(cursoInfo.sesiones || []).map((sesion, idx) => (
               <div
                 key={idx}
                 className={`

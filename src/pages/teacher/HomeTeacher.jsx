@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatIndividualDate, formatDate } from '../../helpers/date';
+import { BookOpen } from 'lucide-react';
 
 export default function HomeTeacher() {
   const JWT = localStorage.getItem("token");
   const payload = JSON.parse(atob(JWT.split(".")[1]));
 
   const [sessions, setSessions] = useState([]);
+  const [total, setTotal] = useState(0)
 
   useEffect(() => {
     async function fetchData() {
@@ -20,6 +22,7 @@ export default function HomeTeacher() {
 
         const data = await res.json();
         setSessions(data.calendario ?? []);
+        setTotal(data.calendario.length ?? 0)
       } catch (error) {
         console.log(error);
         setSessions([]);
@@ -27,6 +30,14 @@ export default function HomeTeacher() {
     }
     fetchData();
   }, []);
+
+  if (!sessions || sessions.message) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center text-base-content">
+        <p>{calendar.message}</p>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-base-100">
@@ -39,17 +50,20 @@ export default function HomeTeacher() {
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-            <div className="card bg-primary/20 backdrop-blur shadow-md text-center">
-              <div className="card-body">
-                <div className="text-3xl font-bold">12</div>
-                <div className="text-sm opacity-80">Cursos Activos</div>
+            {/* Cursos */}
+            <Link to="/profesor/cursos" className="stat bg-primary/20 backdrop-blur rounded-xl shadow hover:shadow-lg transition cursor-pointer">
+              <div className="stat-value text-primary flex justify-center">
+                <BookOpen size={30} />
               </div>
-            </div>
+              <div className="stat-desc text-base-content text-center font-medium">
+                Cursos
+              </div>
+            </Link>
 
             <div className="card bg-primary/20 backdrop-blur shadow-md text-center">
               <div className="card-body">
-                <div className="text-3xl font-bold">142</div>
-                <div className="text-sm opacity-80">Estudiantes</div>
+                <div className="text-3xl font-bold">{total}</div>
+                <div className="text-sm opacity-80">Sesiones esta semana</div>
               </div>
             </div>
           </div>
@@ -96,7 +110,7 @@ export default function HomeTeacher() {
       {/* Próximas sesiones */}
       <section className="container mx-auto px-5 mb-16 max-w-6xl">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Próximas Sesiones</h2>
+          <h2 className="text-2xl font-bold">Sesiones</h2>
         </div>
 
         <div className="space-y-4">
@@ -134,44 +148,6 @@ export default function HomeTeacher() {
                   >
                     Participantes
                   </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Sesiones realizadas */}
-      <section className="container mx-auto px-5 mb-16 max-w-6xl">
-        <h2 className="text-2xl font-bold mb-6">Sesiones Realizadas</h2>
-
-        <div className="space-y-4">
-          {[
-            {
-              title: "Matemáticas Avanzadas - Vectores y Matrices",
-              date: "Lunes, 3 Febrero",
-              time: "4:00 PM - 5:30 PM",
-            },
-            {
-              title: "Introducción a Física - Cinemática",
-              date: "Miércoles, 5 Febrero",
-              time: "2:00 PM - 3:30 PM",
-            },
-            {
-              title: "Fundamentos de Programación - Estructuras de Control",
-              date: "Viernes, 7 Febrero",
-              time: "7:00 PM - 8:30 PM",
-            },
-          ].map((session, idx) => (
-            <div key={idx} className="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-all">
-              <div className="card-body md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">{session.title}</h3>
-                  <p className="text-sm opacity-70 flex flex-wrap gap-4">
-                    <span>📅 {session.date}</span>
-                    <span>🕐 {session.time}</span>
-                    <span className="text-success font-semibold">✓ Completada</span>
-                  </p>
                 </div>
               </div>
             </div>

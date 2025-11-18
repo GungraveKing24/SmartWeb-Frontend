@@ -35,6 +35,14 @@ const HomeStudent = () => {
     fetchData()
   }, [])
 
+  if (!calendar || calendar.message) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center text-base-content">
+        <p>{calendar.message}</p>
+      </div>
+    )
+  }
+
   return (
     <main className="container mx-auto py-10 px-6 font-sans max-w-6xl bg-base-200 min-h-screen">
 
