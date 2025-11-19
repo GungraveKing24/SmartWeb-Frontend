@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { Bell } from "lucide-react"   // ⭐ ÍCONO BONITO Y PROFESIONAL
 
 export default function NotificationBell() {
   const JWT = localStorage.getItem("token")
@@ -36,7 +37,7 @@ export default function NotificationBell() {
 
     load()
 
-    // 🔥 Listener para cambios provenientes de la página de notificaciones
+    // Escuchar cambios desde otra pestaña o vista
     const handler = () => {
       setHasUnread(localStorage.getItem("hasUnreadNotifications") === "true")
     }
@@ -48,14 +49,20 @@ export default function NotificationBell() {
 
   return (
     <div className="relative">
-      <Link to="/notificaciones" className="btn btn-ghost btn-circle">
-        <div className="indicator">
-          <span className="text-2xl">🔔</span>
+      <Link
+        to="/notificaciones"
+        className="btn btn-ghost btn-circle min-w-[42px] h-[42px] flex items-center justify-center"
+      >
+        <Bell
+          size={20}
+          strokeWidth={2}
+          className="text-primary opacity-80 hover:opacity-100 transition-all"
+        />
 
-          {hasUnread && <span className="badge badge-error badge-xs indicator-item"></span>}
-        </div>
+        {hasUnread && (
+          <span className="absolute top-[6px] right-[6px] w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
+        )}
       </Link>
     </div>
   )
 }
-
