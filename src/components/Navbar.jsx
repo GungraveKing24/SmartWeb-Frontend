@@ -11,11 +11,7 @@ import { useState } from "react"
 export default function Navbar() {
     const { user, logout } = useAuth()
     const role = user?.role?.toLowerCase()
-    const home = role === "administrador"
-        ? "/admin"
-        : role === "profesor"
-            ? "/profesor"
-            : "/usuario"
+    const home = role == "administrador" ? "/admin" : (role == "profesor" ? "/profesor" : "/usuario")
 
     const [open, setOpen] = useState(false)
 
@@ -41,8 +37,6 @@ export default function Navbar() {
             {/* Desktop Menu */}
             <div className="hidden sm:flex flex-none">
                 <ul className="menu menu-horizontal px-1 gap-1">
-
-                    {/* ADMIN */}
                     {role === "administrador" && (
                         <>
                             <li><Link to="/admin" className="gap-2"><Home size={18} /> Home</Link></li>
@@ -52,7 +46,6 @@ export default function Navbar() {
                         </>
                     )}
 
-                    {/* ESTUDIANTE */}
                     {role === "estudiante" && (
                         <>
                             <li><Link to="/usuario" className="gap-2"><Home size={18} /> Inicio</Link></li>
@@ -61,7 +54,6 @@ export default function Navbar() {
                         </>
                     )}
 
-                    {/* PROFESOR */}
                     {role === "profesor" && (
                         <>
                             <li><Link to="/profesor" className="gap-2"><Home size={18} /> Panel</Link></li>
@@ -69,23 +61,10 @@ export default function Navbar() {
                         </>
                     )}
 
-                    {/* Theme Selector */}
-                    <li>
-                        <button className="btn btn-ghost btn-sm min-w-[40px] h-[40px] flex items-center justify-center">
-                            <ThemeSelector small />
-                        </button>
-                    </li>
+                    <ThemeSelector />
 
-                    {/* Notification Bell */}
-                    {(role === "profesor" || role === "estudiante") && (
-                        <li>
-                            <button className="btn btn-ghost btn-sm min-w-[40px] h-[40px] relative flex items-center justify-center">
-                                <NotificationBell small />
-                            </button>
-                        </li>
-                    )}
+                    {(role === "profesor" || role === "estudiante") && <NotificationBell />}
 
-                    {/* LOGOUT */}
                     {role && (
                         <li>
                             <button onClick={logout} className="btn btn-ghost btn-sm text-error gap-2">
@@ -96,12 +75,10 @@ export default function Navbar() {
                 </ul>
             </div>
 
-            {/* MOBILE MENU */}
+            {/* Mobile Dropdown */}
             {open && (
                 <div className="absolute top-16 left-0 w-full bg-base-100 border-t border-base-200 shadow-md sm:hidden z-50 animate-fade-in">
                     <ul className="menu p-4 space-y-2">
-
-                        {/* Opciones iguales pero versión móvil */}
                         {role === "administrador" && (
                             <>
                                 <li><Link to="/admin" onClick={() => setOpen(false)} className="gap-2"><Home size={18} /> Home</Link></li>
@@ -126,23 +103,10 @@ export default function Navbar() {
                             </>
                         )}
 
-                        {/* Theme Selector Mobile */}
-                        <li>
-                            <button className="btn btn-ghost btn-sm min-h-[40px]" onClick={() => setOpen(false)}>
-                                <ThemeSelector small />
-                            </button>
-                        </li>
+                        <ThemeSelector />
 
-                        {/* Notification Bell Mobile */}
-                        {(role === "profesor" || role === "estudiante") && (
-                            <li>
-                                <button className="btn btn-ghost btn-sm min-h-[40px]" onClick={() => setOpen(false)}>
-                                    <NotificationBell small />
-                                </button>
-                            </li>
-                        )}
+                        {(role === "profesor" || role === "estudiante") && <li><NotificationBell /></li>}
 
-                        {/* Logout */}
                         {role && (
                             <li>
                                 <button onClick={logout} className="btn btn-error btn-sm w-full">
@@ -156,3 +120,4 @@ export default function Navbar() {
         </nav>
     )
 }
+

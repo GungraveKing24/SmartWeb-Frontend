@@ -37,7 +37,7 @@ export default function NotificationBell() {
 
     load()
 
-    // Escuchar cambios desde otra pestaña o vista
+    // 🔥 Listener para cambios provenientes de la página de notificaciones
     const handler = () => {
       setHasUnread(localStorage.getItem("hasUnreadNotifications") === "true")
     }
@@ -48,21 +48,22 @@ export default function NotificationBell() {
   }, [])
 
   return (
-    <div className="relative">
-      <Link
-        to="/notificaciones"
-        className="btn btn-ghost btn-circle min-w-[42px] h-[42px] flex items-center justify-center"
+    <>
+      <Link 
+        to="/notificaciones" 
+        className="relative btn btn-ghost btn-circle"
       >
-        <Bell
-          size={20}
-          strokeWidth={2}
-          className="text-primary opacity-80 hover:opacity-100 transition-all"
-        />
+        <div className="min-w-[42px] h-[42px] flex items-center justify-center">
+          <Bell
+            size={18}
+            strokeWidth={2}
+            className="text-primary opacity-80 hover:opacity-100 transition-all"
+          />
 
-        {hasUnread && (
-          <span className="absolute top-[6px] right-[6px] w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
-        )}
+          {hasUnread && <span className="absolute top-[6px] right-[6px] w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>}
+        </div>
       </Link>
-    </div>
+    </>
   )
 }
+
