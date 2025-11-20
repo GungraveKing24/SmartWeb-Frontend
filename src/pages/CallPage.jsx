@@ -39,6 +39,8 @@ export default function CallPage() {
   const [showControls, setShowControls] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
 
+  const [attendance, setAttendance] = useState({}); // 🔥 Registro
+
   const params = useParams();
   const apiKey = "fv5e9c5j23md";
   const JWT = localStorage.getItem("token");
@@ -72,7 +74,7 @@ export default function CallPage() {
     return data.getStreamToken;
   };
 
-  // NAVBAR + controles dinámicos
+  /* 🟩 NAVBAR + CONTROLES dinámicos */
   useEffect(() => {
     let timeout;
 
@@ -91,7 +93,7 @@ export default function CallPage() {
     return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
-  // Inicializar videollamada + chat
+  /* 🟩 Inicializar videollamada + chat */
   useEffect(() => {
     const init = async () => {
       if (!params.callId || !params.cursoId) return;
@@ -111,6 +113,42 @@ export default function CallPage() {
         const callInstance = videoClient.call("default", params.callId);
         await callInstance.join({ create: false });
         setCall(callInstance);
+
+        /* 🔥 Registrar entrada del usuario */
+        setAttendance((prev) => ({
+          ...prev,
+          [userId]: {
+            name: nombre,
+            user_id: userId,
+            entrada: new Date().toLocaleString(),
+            salida: "",
+          },
+        }));
+
+        /* Detectar cuando alguien entra o sale */
+        callInstance.on("participantJoined", (e) => {
+          const p = e.participant.user;
+          setAttendance((prev) => ({
+            ...prev,
+            [p.id]: {
+              name: p.name,
+              user_id: p.id,
+              entrada: new Date().toLocaleString(),
+              salida: "",
+            },
+          }));
+        });
+
+        callInstance.on("participantLeft", (e) => {
+          const p = e.participant.user;
+          setAttendance((prev) => ({
+            ...prev,
+            [p.id]: {
+              ...prev[p.id],
+              salida: new Date().toLocaleString(),
+            },
+          }));
+        });
 
         const chat = StreamChat.getInstance(apiKey);
         await chat.connectUser(user, token);
@@ -138,6 +176,27 @@ export default function CallPage() {
     };
   }, []);
 
+  /* 🟩 Descargar asistencia */
+  const downloadAttendance = () => {
+    const registros = Object.values(attendance);
+
+    let csv = "Nombre,ID Usuario,Hora Entrada,Hora Salida\n";
+
+    registros.forEach((p) => {
+      csv += `"${p.name}",${p.user_id},"${p.entrada}","${p.salida}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const urlCSV = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = urlCSV;
+    link.download = `asistencia_${params.callId}.csv`;
+    link.click();
+
+    URL.revokeObjectURL(urlCSV);
+  };
+
   if (!client || !call || !chatClient || !channel)
     return (
       <div className="loading-container">
@@ -162,13 +221,12 @@ export default function CallPage() {
                 <button onClick={() => setShowChat(!showChat)}>💬</button>
 
                 {rol === "Profesor" && (
-                  <button
-                    onClick={() =>
-                      setShowParticipantList(!showParticipantList)
-                    }
-                  >
-                    👥
-                  </button>
+                  <>
+                    <button onClick={() => setShowParticipantList(!showParticipantList)}>👥</button>
+
+                    {/* 🔥 Botón de descargar asistencia */}
+                    <button onClick={downloadAttendance}>📥</button>
+                  </>
                 )}
 
                 <button
@@ -231,9 +289,7 @@ export default function CallPage() {
               <div className="floating-chat animate-fade">
                 <div className="floating-chat-header">
                   <span>Participantes</span>
-                  <button onClick={() => setShowParticipantList(false)}>
-                    ✕
-                  </button>
+                  <button onClick={() => setShowParticipantList(false)}>✕</button>
                 </div>
 
                 <div className="floating-chat-body">
@@ -243,7 +299,7 @@ export default function CallPage() {
             )}
           </div>
 
-          {/* NOTIFICACIONES */}
+          {/* NOTIFICACIÓN */}
           {notification && (
             <NotificationModal
               isOpen={true}

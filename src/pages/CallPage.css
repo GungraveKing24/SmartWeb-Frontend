@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 26px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
 
   position: absolute;
   top: -85px;
@@ -67,6 +67,7 @@
   padding: 8px 14px;
   border-radius: 8px;
   transition: 0.25s ease;
+  font-size: 1.1rem;
 }
 
 .meeting-actions button:hover {
@@ -128,14 +129,11 @@
   opacity: 1;
 }
 
-/* Botón de grabación (rojo con icono de stop) */
+/* Quitar grabación y pantalla compartida */
 button[aria-label="Start recording"],
-button[aria-label="Stop recording"] {
-  display: none !important;
-}
-
-/* También removemos cualquier wrapper adicional */
-[data-testid*="record"] {
+button[aria-label="Stop recording"],
+[data-testid*="record"],
+button[data-testid="toggle-screenshare-button"] {
   display: none !important;
 }
 
