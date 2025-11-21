@@ -21,7 +21,7 @@ export default function PrivacyPolicy() {
           {/* Badges */}
           <div className="flex flex-wrap gap-3 justify-end mb-8">
             <span className="badge badge-outline text-sm">
-              ⏱️ Última actualización: 15 de Marzo, 2024
+              ⏱️ Última actualización: 15 de Noviembre, 2025
             </span>
 
             <span className="badge badge-outline text-sm">

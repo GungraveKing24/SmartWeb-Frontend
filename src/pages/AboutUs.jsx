@@ -23,7 +23,7 @@ const AboutUs = () => {
             Equipo de Desarrollo
           </h2>
         </div>
-
+        {/* Descripciones  */}
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
