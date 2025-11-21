@@ -7,7 +7,7 @@ import {
   SpeakerLayout,
   CallControls,
   CallParticipantsList,
-} from "@stream-io/video-react-dk";
+} from "@stream-io/video-react-sdk";
 
 import { StreamChat } from "stream-chat";
 import {
