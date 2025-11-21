@@ -127,7 +127,9 @@ export default function CallPage() {
 
         /* Detectar cuando alguien entra o sale */
         callInstance.on("participantJoined", (e) => {
-          const p = e.participant;
+          const p = e.participant || e.user;
+          if (!p) return;
+
           setAttendance((prev) => ({
             ...prev,
             [p.userId]: {
@@ -140,7 +142,9 @@ export default function CallPage() {
         });
 
         callInstance.on("participantLeft", (e) => {
-          const p = e.participant;
+          const p = e.participant || e.user;
+          if (!p) return;
+
           setAttendance((prev) => ({
             ...prev,
             [p.userId]: {
