@@ -107,7 +107,7 @@ export default function Terms() {
             content: (
               <p>
                 Tus datos están protegidos según nuestra {" "}
-                <a href="/privacy" className="link link-primary font-semibold">Política de Privacidad</a>.
+                <a href="/privacy-policy" className="link link-primary font-semibold">Política de Privacidad</a>.
               </p>
             )
           }, {
