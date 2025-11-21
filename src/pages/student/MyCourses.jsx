@@ -23,6 +23,8 @@ export default function MyCourses() {
     loadCursos()
   }, [])
 
+  // ALERTAS
+
   const loadCursos = async () => {
     try {
       const res = await fetch(url + `/students/courses/active`, {

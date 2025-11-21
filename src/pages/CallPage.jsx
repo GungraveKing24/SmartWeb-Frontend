@@ -297,6 +297,7 @@ export default function CallPage() {
                   localStorage.removeItem("callStorage");
                   window.location.href = "/";
                 }}
+                // BOTONES DE LA LLAMADA NO BUGS
                 overrides={{
                   RecordCallButton: () => null,
                   StartRecordingButton: () => null,
