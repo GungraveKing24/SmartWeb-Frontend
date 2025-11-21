@@ -130,9 +130,9 @@ export default function CallPage() {
           const p = e.participant;
           setAttendance((prev) => ({
             ...prev,
-            [p.user_id]: {
-              name: p.user?.name || "Usuario",
-              user_id: p.user_id,
+            [p.userId]: {
+              name: p.name || "Usuario",
+              user_id: p.userId,
               entrada: new Date().toLocaleString(),
               salida: "",
             },
@@ -143,8 +143,8 @@ export default function CallPage() {
           const p = e.participant;
           setAttendance((prev) => ({
             ...prev,
-            [p.user_id]: {
-              ...prev[p.user_id],
+            [p.userId]: {
+              ...prev[p.userId],
               salida: new Date().toLocaleString(),
             },
           }));
