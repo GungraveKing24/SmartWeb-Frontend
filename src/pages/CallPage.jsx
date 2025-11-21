@@ -7,7 +7,7 @@ import {
   SpeakerLayout,
   CallControls,
   CallParticipantsList,
-} from "@stream-io/video-react-sdk";
+} from "@stream-io/video-react-dk";
 
 import { StreamChat } from "stream-chat";
 import {
@@ -127,12 +127,12 @@ export default function CallPage() {
 
         /* Detectar cuando alguien entra o sale */
         callInstance.on("participantJoined", (e) => {
-          const p = e.participant.user;
+          const p = e.participant;
           setAttendance((prev) => ({
             ...prev,
-            [p.id]: {
-              name: p.name,
-              user_id: p.id,
+            [p.user_id]: {
+              name: p.user?.name || "Usuario",
+              user_id: p.user_id,
               entrada: new Date().toLocaleString(),
               salida: "",
             },
@@ -140,11 +140,11 @@ export default function CallPage() {
         });
 
         callInstance.on("participantLeft", (e) => {
-          const p = e.participant.user;
+          const p = e.participant;
           setAttendance((prev) => ({
             ...prev,
-            [p.id]: {
-              ...prev[p.id],
+            [p.user_id]: {
+              ...prev[p.user_id],
               salida: new Date().toLocaleString(),
             },
           }));
