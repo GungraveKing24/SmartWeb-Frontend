@@ -12,8 +12,13 @@ export default function GestionarUsuarios() {
   const [confirmModal, setConfirmModal] = useState(null)
   const [notification, setNotification] = useState(null)
 
+  // 🔥 Nuevo modal para editar max_cursos
+  const [maxCursosModal, setMaxCursosModal] = useState(null)
+  const [nuevoMax, setNuevoMax] = useState("")
+
   const token = localStorage.getItem("token")
   const url = import.meta.env.VITE_BACKEND_URL
+  console.log(usuarios)
 
   useEffect(() => {
     if (!token) {
@@ -37,7 +42,6 @@ export default function GestionarUsuarios() {
     }
   }
 
-  // Estilo para el rol
   const getRolBadge = (rol) => {
     switch (rol.toLowerCase()) {
       case "profesor":
@@ -70,6 +74,52 @@ export default function GestionarUsuarios() {
     })
   }
 
+  // 🔥 Abrir modal de max cursos
+  const handleEditMaxCursos = (user) => {
+    setNuevoMax(user.max_cursos || "")
+    setMaxCursosModal({
+      userId: user.id,
+      nombre: user.nombre,
+    })
+  }
+
+  // 🔥 Ejecutar PUT /change/max-cursos/{profesor_id}
+  const updateMaxCursos = async () => {
+    try {
+      const res = await fetch(
+        `${url}/administrador/change/max-cursos/${maxCursosModal.userId}?count=${nuevoMax}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      if (!res.ok) throw new Error()
+
+      // Actualizar estado local
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.id === maxCursosModal.userId ? { ...u, max_cursos: nuevoMax } : u
+        )
+      )
+
+      setNotification({
+        type: "success",
+        message: `✔ Máximo de cursos actualizado para ${maxCursosModal.nombre}`,
+      })
+
+      setMaxCursosModal(null)
+    } catch (err) {
+      setNotification({
+        type: "error",
+        message: "❌ No se pudo actualizar el máximo de cursos.",
+      })
+    }
+  }
+
   const processAction = async (action) => {
     if (action.type === "deactivate") {
       try {
@@ -80,7 +130,6 @@ export default function GestionarUsuarios() {
 
         if (!res.ok) throw new Error("No se pudo desactivar")
 
-        // Actualizar estado local
         setUsuarios((prev) =>
           prev.map((u) =>
             u.id === action.userId ? { ...u, status: "Inactivo" } : u
@@ -113,7 +162,6 @@ export default function GestionarUsuarios() {
         </div>
       </div>
 
-      {/* CONTENIDO */}
       <main className="max-w-6xl mx-auto px-6 py-10 space-y-10">
 
         {/* FILTROS */}
@@ -164,6 +212,7 @@ export default function GestionarUsuarios() {
                   <th>Nombre</th>
                   <th>Correo</th>
                   <th>Rol</th>
+                  <th>Max Cursos</th>
                   <th>Estado</th>
                   <th className="text-center">Acciones</th>
                 </tr>
@@ -172,7 +221,7 @@ export default function GestionarUsuarios() {
               <tbody>
                 {filteredUsuarios.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center opacity-70 py-10">
+                    <td colSpan="6" className="text-center opacity-70 py-10">
                       No hay coincidencias.
                     </td>
                   </tr>
@@ -182,6 +231,7 @@ export default function GestionarUsuarios() {
                       <td className="font-semibold">{u.nombre}</td>
                       <td>{u.email}</td>
                       <td><span className={getRolBadge(u.rol)}>{u.rol}</span></td>
+                      <td>{u.rol === "Profesor" ? u.max_cursos ?? "-" : "-"}</td>
                       <td>
                         {u.status === "Inactivo" ? (
                           <span className="badge badge-error">Inactivo</span>
@@ -190,8 +240,19 @@ export default function GestionarUsuarios() {
                         )}
                       </td>
 
-                      {/* Acciones */}
-                      <td className="text-center">
+                      {/* ACCIONES */}
+                      <td className=" space-x-2">
+
+                        {/* Solo profesores */}
+                        {u.rol === "Profesor" && (
+                          <button
+                            className="btn btn-info btn-sm btn-outline"
+                            onClick={() => handleEditMaxCursos(u)}
+                          >
+                            📘 Editar Máx. Cursos
+                          </button>
+                        )}
+
                         <button
                           className="btn btn-warning btn-sm btn-outline"
                           onClick={() => handleDeactivateUser(u)}
@@ -209,7 +270,49 @@ export default function GestionarUsuarios() {
         </section>
       </main>
 
-      {/* MODAL CONFIRMACIÓN */}
+      {/* MODAL → EDITAR MAX CURSOS */}
+      {maxCursosModal && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">
+              📘 Editar Máximo de Cursos — {maxCursosModal.nombre}
+            </h3>
+
+            <div className="form-control mt-4">
+              <label className="label">Nuevo máximo</label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                inputMode="numeric"
+                pattern="[0-9]"
+                className="input input-bordered"
+                value={nuevoMax}
+                onChange={(e) => {
+                  const val = e.target.value;
+
+                  if (val < 0) return;
+
+                  if (!/^\d*$/.test(val)) return;
+
+                  setNuevoMax(e.target.value)
+                }}
+              />
+            </div>
+
+            <div className="modal-action">
+              <button className="btn" onClick={() => setMaxCursosModal(null)}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={updateMaxCursos}>
+                Guardar cambios
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* MODAL CONFIRMACIÓN DESACTIVAR */}
       {confirmModal && (
         <dialog open className="modal modal-open">
           <div className="modal-box">
@@ -228,6 +331,7 @@ export default function GestionarUsuarios() {
         </dialog>
       )}
 
+      {/* NOTIFICACIONES */}
       {notification && (
         <NotificationModal
           type={notification.type}

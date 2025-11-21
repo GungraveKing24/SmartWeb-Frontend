@@ -90,21 +90,22 @@ export default function VisualizarCursos() {
                 body: JSON.stringify(nuevoCurso),
             });
 
-            if (!res.ok) throw new Error("Error al crear el curso.")
+            if (!res.ok) {
+              const message = await res.json()
+              throw new Error(message.detail)
+            }
             const data = await res.json()
 
             setNotification({
                 type: "success",
                 message: `🎉 Curso "${nuevoCurso.titulo}" creado correctamente.`,
             })
-            console.log(data)
 
             setCursos((prev) => [...prev, data.curso])
         } catch (error) {
-            console.log(error)
             setNotification({
                 type: "error",
-                message: `Ocurrio un error al crear el curso, intentelo mas tarde`,
+                message: error.message || `Ocurrio un error al crear el curso, intentelo mas tarde`,
             })
         } finally {
             setCreateModalOpen(false)
