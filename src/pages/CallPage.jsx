@@ -41,6 +41,8 @@ export default function CallPage() {
 
   const [attendance, setAttendance] = useState({}); // 🔥 Registro
 
+  const [blocked, setBlocked] = useState(false);
+
   const params = useParams();
   const apiKey = "fv5e9c5j23md";
   const JWT = localStorage.getItem("token");
@@ -98,6 +100,27 @@ export default function CallPage() {
     const init = async () => {
       if (!params.callId || !params.cursoId) return;
 
+    //Logica para que el usuario no entre en la misma llamada o en otras
+    const callKey = `in_call_${params.callId}`;
+    const sameCall = localStorage.getItem("callStorage")
+
+    if (sameCall) {
+      if (sameCall === callKey) {
+        setNotification({
+          type: "error",
+          message: "Tienes una llamada en otra pestaña",
+        });
+      } else {
+        setNotification({
+          type: "error",
+          message: "Ya estás en otra llamada",
+        });
+      }
+
+      setBlocked(true);   // 🔥 Bloquea el render y evita loading infinito
+      return;
+    }
+    //--------------------------------------------------------------------------------------
       const user = {
         id: userId,
         name: nombre,
@@ -164,11 +187,14 @@ export default function CallPage() {
 
         setChatClient(chat);
         setChannel(ch);
+
+        localStorage.setItem("callStorage",`in_call_${params.callId}`)
       } catch (err) {
         setNotification({
           type: "error",
           message: "Error al conectar a la llamada",
         });
+        console.log(err)
       }
     };
 
@@ -200,6 +226,18 @@ export default function CallPage() {
 
     URL.revokeObjectURL(urlCSV);
   };
+
+  if (blocked)
+    return (
+    <>
+      <NotificationModal
+        isOpen={true}
+        type="error"
+        message="No puedes unirte porque ya estás en otra llamada."
+        onClose={() => (window.location.href = "/")}
+      />
+    </>
+  );
 
   if (!client || !call || !chatClient || !channel)
     return (
@@ -237,6 +275,7 @@ export default function CallPage() {
                   className="exit-btn"
                   onClick={() => {
                     call.leave();
+                    localStorage.removeItem("callStorage");
                     window.location.href = "/";
                   }}
                 >
@@ -255,6 +294,7 @@ export default function CallPage() {
               <CallControls
                 onLeave={() => {
                   call.leave();
+                  localStorage.removeItem("callStorage");
                   window.location.href = "/";
                 }}
                 overrides={{
