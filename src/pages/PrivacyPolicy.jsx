@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
               <tbody>
                 <tr>
                   <td className="font-semibold">Registro</td>
-                  <td>Nombre, email, nacimiento</td>
+                  <td>Nombre, email</td>
                   <td>Crear y gestionar tu cuenta</td>
                 </tr>
                 <tr>
@@ -169,7 +169,7 @@ export default function PrivacyPolicy() {
             <p className="mb-2">Para ejercer tus derechos o resolver dudas:</p>
             <ul className="text-sm space-y-1">
               <li>📧 privacidad@smartweb.edu</li>
-              <li>📱 +1 (555) 123-4567</li>
+              <li>📱 +505 1233-4567</li>
               <li>🏢 Oficina de Protección de Datos, SMARTWEB</li>
             </ul>
           </div>
