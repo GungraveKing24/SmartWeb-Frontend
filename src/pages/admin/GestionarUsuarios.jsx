@@ -252,13 +252,6 @@ export default function GestionarUsuarios() {
                             📘 Editar Máx. Cursos
                           </button>
                         )}
-
-                        <button
-                          className="btn btn-warning btn-sm btn-outline"
-                          onClick={() => handleDeactivateUser(u)}
-                        >
-                          🚫 Desactivar
-                        </button>
                       </td>
 
                     </tr>
