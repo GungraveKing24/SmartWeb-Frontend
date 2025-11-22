@@ -12,7 +12,7 @@ export default function GestionarUsuarios() {
   const [confirmModal, setConfirmModal] = useState(null)
   const [notification, setNotification] = useState(null)
 
-  // 🔥 Nuevo modal para editar max_cursos
+  // Nuevo modal para editar max_cursos
   const [maxCursosModal, setMaxCursosModal] = useState(null)
   const [nuevoMax, setNuevoMax] = useState("")
 
@@ -74,7 +74,7 @@ export default function GestionarUsuarios() {
     })
   }
 
-  // 🔥 Abrir modal de max cursos
+  //  Abrir modal de max cursos
   const handleEditMaxCursos = (user) => {
     setNuevoMax(user.max_cursos || "")
     setMaxCursosModal({
@@ -83,7 +83,7 @@ export default function GestionarUsuarios() {
     })
   }
 
-  // 🔥 Ejecutar PUT /change/max-cursos/{profesor_id}
+  // Ejecutar PUT /change/max-cursos/{profesor_id}
   const updateMaxCursos = async () => {
     try {
       const res = await fetch(
