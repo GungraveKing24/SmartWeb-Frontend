@@ -43,6 +43,15 @@ const HomeStudent = () => {
     )
   }
 
+  // Ordenar solo si calendar existe, sino usar array vacío
+const sortedCalendar = Array.isArray(calendar)
+  ? [...calendar].sort((a, b) => {
+      const order = { en_curso: 1, futura: 2, proxima: 2, concluida: 3 }
+      return order[a.estado] - order[b.estado]
+    })
+  : []
+
+
   return (
     <main className="container mx-auto py-10 px-6 font-sans max-w-6xl bg-base-200 min-h-screen">
 
@@ -87,7 +96,7 @@ const HomeStudent = () => {
         </div>
 
         {/* LISTA DE SESIONES */}
-        {(calendar || []).map((session, idx) => (
+        {sortedCalendar.map((session, idx) => (
           <div
             key={idx}
             className={`card shadow-md border border-base-300 hover:shadow-lg transition 
