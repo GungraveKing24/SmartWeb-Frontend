@@ -135,7 +135,7 @@ export default function GestionarCursos() {
           </div>
         </section>
 
-{/* TABLA / LISTA RESPONSIVE */}
+{/* TABLA RESPONSIVE (scroll horizontal en móviles) */}
 <section>
   <div className="flex justify-between items-center mb-4">
     <h2 className="text-xl font-bold">Catálogo de Cursos</h2>
@@ -150,101 +150,53 @@ export default function GestionarCursos() {
   {loading ? (
     <div className="text-center py-10">Cargando cursos...</div>
   ) : (
-    <>
-      {/* 🟦 Desktop: Tabla */}
-      <div className="hidden md:block bg-base-100 rounded-xl shadow p-4">
-        <table className="table w-full">
-          <thead className="text-sm text-base-content/70 border-b border-base-300">
-            <tr>
-              <th className="font-semibold">Curso</th>
-              <th className="font-semibold">Instructor</th>
-              <th className="font-semibold">Estudiantes</th>
-              <th className="font-semibold">Creación</th>
-              <th className="font-semibold">Estado</th>
-              <th className="font-semibold">Acciones</th>
-            </tr>
-          </thead>
+    <div className="bg-base-100 rounded-xl shadow p-4 overflow-x-auto border border-base-300">
+      <table className="table w-full min-w-[700px]">
+        <thead className="text-sm text-base-content/70 border-b border-base-300">
+          <tr>
+            <th className="font-semibold">Curso</th>
+            <th className="font-semibold">Instructor</th>
+            <th className="font-semibold">Estudiantes</th>
+            <th className="font-semibold">Creación</th>
+            <th className="font-semibold">Estado</th>
+            <th className="font-semibold">Acciones</th>
+          </tr>
+        </thead>
 
-          <tbody>
-            {filteredCourses.map((curso) => (
-              <tr key={curso.id} className="hover:bg-base-200 transition">
-                <td>
-                  <div className="font-semibold">{curso.title}</div>
-                  <div className="text-sm opacity-60">{curso.description}</div>
-                </td>
+        <tbody>
+          {filteredCourses.map((curso) => (
+            <tr key={curso.id} className="hover:bg-base-200 transition">
+              <td>
+                <div className="font-semibold">{curso.title}</div>
+                <div className="text-sm opacity-60">{curso.description}</div>
+              </td>
 
-                <td>{curso.instructor}</td>
-                <td>{curso.students.length}</td>
-                <td>{curso.creationDate}</td>
+              <td>{curso.instructor}</td>
+              <td>{curso.students.length}</td>
+              <td>{curso.creationDate}</td>
 
-                <td>
-                  <span className={estadoBadge[curso.status]}>
-                    {curso.status}
-                  </span>
-                </td>
-
-                <td>
-                  <button
-                    className="btn btn-sm btn-outline btn-primary"
-                    onClick={() => {
-                      setSelectedCourse(curso);
-                      setModalOpen(true);
-                    }}
-                  >
-                    Ver
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* 🟩 Móvil: Cards */}
-      <div className="md:hidden space-y-4">
-        {filteredCourses.map((curso) => (
-          <div
-            key={curso.id}
-            className="bg-base-100 shadow rounded-xl p-4 border border-base-300"
-          >
-            <h3 className="text-lg font-bold">{curso.title}</h3>
-            <p className="text-sm opacity-70">{curso.description}</p>
-
-            <div className="mt-3 space-y-1 text-sm">
-              <p>
-                <span className="font-semibold">Instructor:</span>{" "}
-                {curso.instructor}
-              </p>
-              <p>
-                <span className="font-semibold">Estudiantes:</span>{" "}
-                {curso.students.length}
-              </p>
-              <p>
-                <span className="font-semibold">Creación:</span>{" "}
-                {curso.creationDate}
-              </p>
-
-              <p>
-                <span className="font-semibold">Estado:</span>{" "}
+              <td>
                 <span className={estadoBadge[curso.status]}>
                   {curso.status}
                 </span>
-              </p>
-            </div>
+              </td>
 
-            <button
-              className="btn btn-primary btn-sm mt-4 w-full"
-              onClick={() => {
-                setSelectedCourse(curso);
-                setModalOpen(true);
-              }}
-            >
-              Ver detalles
-            </button>
-          </div>
-        ))}
-      </div>
-    </>
+              <td>
+                <button
+                  className="btn btn-sm btn-outline btn-primary"
+                  onClick={() => {
+                    setSelectedCourse(curso);
+                    setModalOpen(true);
+                  }}
+                >
+                  Ver
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )}
 </section>
 

@@ -34,10 +34,19 @@ export default function HomeTeacher() {
   if (!sessions || sessions.message) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center text-base-content">
-        <p>{calendar.message}</p>
+        <p>{sessions.message}</p>
       </div>
     )
   }
+
+  // Ordenamiento seguro
+const sortedSessions = Array.isArray(sessions)
+  ? [...sessions].sort((a, b) => {
+      const order = { en_curso: 1, futura: 2, proxima: 2, concluida: 3 };
+      return order[a.estado] - order[b.estado];
+    })
+  : [];
+
 
   return (
     <div className="min-h-screen bg-base-100">
@@ -114,7 +123,7 @@ export default function HomeTeacher() {
         </div>
 
         <div className="space-y-4">
-          {(sessions || []).map((session, idx) => (
+          {sortedSessions.map((session, idx) => (
             <div
               key={idx}
               className={`card shadow-lg border border-base-300 transition-all hover:shadow-xl
