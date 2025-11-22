@@ -44,7 +44,7 @@ const AboutUs = () => {
               name: "Jorge Cisneros",
               role: "Desarrollador BackEnd",
               image:
-                "https://firebasestorage.googleapis.com/v0/b/dulcesabor-c6f5a.appspot.com/o/Imagenes%20de%20CLOUD%20COMPUTING%2F171405822-default-avatar-photo-placeholder-gray-profile-picture-icon-business-man-illustration.jpg?alt=media&token=e9497eef-93c9-4226-9601-044df19218b3",
+                "https://firebasestorage.googleapis.com/v0/b/composite-sun-374501.appspot.com/o/ImagenesTest%2FWhatsApp%20Image%202025-11-21%20at%2019.25.53_b83fdb26.jpg?alt=media&token=cc70adf9-ddb2-445f-b3ef-8a4748def5cd",
               desc: "Manejo de servidores, seguridad y lógica del sistema.",
             },
             {
